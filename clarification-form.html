@@ -86,7 +86,8 @@
 // ─────────────────────────────────────────────
 // CONFIG: عدّل هذا الرابط ليطابق n8n instance الخاص بك
 // ─────────────────────────────────────────────
-const N8N_BASE = 'https://project-n8n-2026.app.n8n.cloud/webhook';
+const N8N_BASE = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev';
+const WEBHOOK_SECRET = 'grant-secure-2026-kimi-key';
 
 const params = new URLSearchParams(location.search);
 const appId = params.get('id') || 'UNKNOWN';
@@ -97,8 +98,8 @@ document.getElementById('roundNum').textContent = round;
 document.getElementById('appIdInput').value = appId;
 document.getElementById('roundInput').value = round;
 
-const QUESTIONS_URL = `${N8N_BASE}/grant-questions?id=${encodeURIComponent(appId)}`;
-const SUBMIT_URL = `${N8N_BASE}/grant-clarification`;
+const QUESTIONS_URL = `https://project-n8n-2026.app.n8n.cloud/webhook/grant-questions?id=${encodeURIComponent(appId)}`;
+const SUBMIT_URL = `${N8N_BASE}/clarification`;
 
 let questionsList = [];
 
@@ -240,14 +241,15 @@ document.getElementById('clarificationForm').addEventListener('submit', async (e
   };
 
   try {
-    const res = await fetch(SUBMIT_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify(payload)
-    });
+   const res = await fetch(SUBMIT_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-Webhook-Secret': WEBHOOK_SECRET  
+  },
+  body: JSON.stringify(payload)
+});
 
     const data = await res.json();
     if (!res.ok || data.error) throw new Error(data.message || data.error_code || 'Submission failed');

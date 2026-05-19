@@ -88,8 +88,9 @@
   </div>
 </div>
 <script>
-// ✅ الحل: استخدام var بدلاً من const، وتعريفه في أعلى الـ script
-var WEBHOOK_URL = 'https://project-n8n-2026.app.n8n.cloud/webhook/grant-decision';
+//  الحل: استخدام var بدلاً من const، وتعريفه في أعلى الـ script
+const WEBHOOK_URL = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/decision';
+const WEBHOOK_SECRET = 'grant-secure-2026-kimi-key';
 
 const params = new URLSearchParams(location.search);
 const appId = params.get('id') || params.get('application_id') || 'UNKNOWN';
@@ -211,13 +212,16 @@ async function submitDecision() {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 45000);
 
-    // ✅ استخدام WEBHOOK_URL المُعرّف بـ var
-    const res = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
+    //  استخدام WEBHOOK_URL المُعرّف بـ var
+  const res = await fetch(WEBHOOK_URL, {
+  method: 'POST',
+  headers: { 
+    'Content-Type': 'application/json',
+    'X-Webhook-Secret': WEBHOOK_SECRET 
+  },
+  body: JSON.stringify(payload),
+  signal: controller.signal
+});
 
     clearTimeout(timeoutId);
 
