@@ -1,0 +1,277 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clarification Response</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>body{font-family:'Inter',sans-serif;}</style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden">
+
+  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+    <h1 class="text-2xl font-bold text-white">Additional Information Required</h1>
+    <p class="text-blue-100 text-sm mt-1">
+      Round <span id="roundNum">1</span> — Application <span id="appIdDisplay" class="font-mono"></span>
+    </p>
+  </div>
+
+  <div class="p-8">
+
+    <!-- Loading -->
+    <div id="loading" class="text-center py-12">
+      <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <p class="text-slate-500">Loading questions...</p>
+    </div>
+
+    <!-- Load Error -->
+    <div id="loadError" class="hidden bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+      <h3 class="text-lg font-semibold text-red-800">Failed to Load Questions</h3>
+      <p id="loadErrorMsg" class="text-red-600 mt-1"></p>
+      <div id="debugInfo" class="mt-3 text-xs text-red-400 font-mono text-left bg-red-100 p-2 rounded break-all"></div>
+      <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition">Try Again</button>
+    </div>
+
+    <!-- Form -->
+    <form id="clarificationForm" class="hidden space-y-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <p class="text-amber-800 text-sm">
+          Please answer <strong>all</strong> questions below in detail. Each question has its own field.
+        </p>
+      </div>
+
+      <input type="hidden" name="application_id" id="appIdInput">
+      <input type="hidden" name="clarification_round" id="roundInput">
+
+      <div id="questionsContainer" class="space-y-6"></div>
+
+      <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition flex items-center justify-center gap-2">
+        <span>Submit All Answers</span>
+        <svg id="spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Success -->
+    <div id="result" class="hidden mt-6">
+      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
+        <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+        </div>
+        <h3 class="text-lg font-semibold text-emerald-800">Answers Submitted!</h3>
+        <p class="text-emerald-600 mt-1">Thank you. Your application will now proceed to final evaluation.</p>
+      </div>
+    </div>
+
+    <!-- Submit Error -->
+    <div id="error" class="hidden mt-6">
+      <div class="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+        <h3 class="text-lg font-semibold text-red-800">Submission Failed</h3>
+        <p id="errorMsg" class="text-red-600 mt-1"></p>
+        <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition">Try Again</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// CONFIG: عدّل هذا الرابط ليطابق n8n instance الخاص بك
+// ─────────────────────────────────────────────
+const N8N_BASE = 'https://project-n8n-2026.app.n8n.cloud/webhook';
+
+const params = new URLSearchParams(location.search);
+const appId = params.get('id') || 'UNKNOWN';
+const round = params.get('round') || '1';
+
+document.getElementById('appIdDisplay').textContent = appId;
+document.getElementById('roundNum').textContent = round;
+document.getElementById('appIdInput').value = appId;
+document.getElementById('roundInput').value = round;
+
+const QUESTIONS_URL = `${N8N_BASE}/grant-questions?id=${encodeURIComponent(appId)}`;
+const SUBMIT_URL = `${N8N_BASE}/grant-clarification`;
+
+let questionsList = [];
+
+// ── معالجة أخطاء JavaScript العامة ──
+window.onerror = function(msg, url, line) {
+  console.error('JS Error:', msg, 'at line', line);
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('loadError').classList.remove('hidden');
+  document.getElementById('loadErrorMsg').textContent = 'Unexpected error: ' + msg;
+  return true;
+};
+
+async function loadQuestions() {
+  try {
+    const res = await fetch(QUESTIONS_URL, {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+
+    const data = await res.json();
+    console.log('Raw response:', data);
+
+    // ── معالجة أي هيكل يرسله n8n ──
+    let rawQuestions = null;
+
+    if (data.json && data.json.questions) {
+      rawQuestions = data.json.questions;
+    } else if (data.questions) {
+      rawQuestions = data.questions;
+    } else if (data.json && data.json.clarification_questions) {
+      rawQuestions = data.json.clarification_questions;
+    } else if (data.clarification_questions) {
+      rawQuestions = data.clarification_questions;
+    }
+
+    if (typeof rawQuestions === 'string') {
+      try {
+        const parsed = JSON.parse(rawQuestions);
+        rawQuestions = parsed.questions || parsed;
+      } catch (e) {
+        rawQuestions = [];
+      }
+    }
+
+    if (rawQuestions && typeof rawQuestions === 'object' && !Array.isArray(rawQuestions) && rawQuestions.questions) {
+      rawQuestions = rawQuestions.questions;
+    }
+
+    questionsList = Array.isArray(rawQuestions) ? rawQuestions : [];
+
+    if (questionsList.length === 0) {
+      showNoQuestions();
+      return;
+    }
+
+    renderQuestions();
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('clarificationForm').classList.remove('hidden');
+
+  } catch (err) {
+    console.error('Load error:', err);
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('loadError').classList.remove('hidden');
+    document.getElementById('loadErrorMsg').textContent = err.message || 'Unable to load questions.';
+    document.getElementById('debugInfo').textContent =
+      'URL: ' + QUESTIONS_URL + '\nError: ' + err.toString();
+  }
+}
+
+function renderQuestions() {
+  const container = document.getElementById('questionsContainer');
+  container.innerHTML = '';
+
+  questionsList.forEach((q, i) => {
+    const questionText = typeof q === 'string' ? q : (q.question || q.text || JSON.stringify(q));
+
+    const div = document.createElement('div');
+    div.className = 'bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3';
+    div.innerHTML = `
+      <div class="flex items-start gap-3">
+        <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">${i + 1}</span>
+        <p class="text-slate-800 font-medium leading-relaxed pt-1">${escapeHtml(questionText)}</p>
+      </div>
+      <textarea
+        name="answer_${i}"
+        data-question="${escapeHtml(questionText)}"
+        required
+        rows="4"
+        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-700 bg-white"
+        placeholder="Type your detailed answer here..."
+      ></textarea>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function showNoQuestions() {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('clarificationForm').classList.remove('hidden');
+  document.getElementById('submitBtn').classList.add('hidden');
+
+  document.getElementById('questionsContainer').innerHTML = `
+    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
+      <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+        <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-lg font-semibold text-emerald-800">No Clarification Needed</h3>
+      <p class="text-emerald-600 mt-1">Your application is clear and complete. Proceeding to evaluation.</p>
+    </div>
+  `;
+}
+
+document.getElementById('clarificationForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+
+  const answersArray = [];
+  const textareas = document.querySelectorAll('textarea[name^="answer_"]');
+
+  textareas.forEach((ta, i) => {
+    answersArray.push({
+      question: ta.getAttribute('data-question') || questionsList[i] || `Question ${i + 1}`,
+      answer: ta.value.trim()
+    });
+  });
+
+  const payload = {
+    application_id: appId,
+    clarification_round: parseInt(round),
+    answers: answersArray,
+    received_at: new Date().toISOString()
+  };
+
+  try {
+    const res = await fetch(SUBMIT_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (!res.ok || data.error) throw new Error(data.message || data.error_code || 'Submission failed');
+
+    document.getElementById('clarificationForm').classList.add('hidden');
+    document.getElementById('result').classList.remove('hidden');
+
+  } catch (err) {
+    console.error('Submit error:', err);
+    document.getElementById('clarificationForm').classList.add('hidden');
+    document.getElementById('error').classList.remove('hidden');
+    document.getElementById('errorMsg').textContent = err.message || 'Please check your connection and try again.';
+  }
+});
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+loadQuestions();
+</script>
+
+</body>
+</html>
