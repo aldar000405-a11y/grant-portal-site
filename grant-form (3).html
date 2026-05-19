@@ -265,6 +265,7 @@ document.getElementById('grantForm').addEventListener('submit', async (e) => {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
       },
       body: JSON.stringify(payload)
     });
