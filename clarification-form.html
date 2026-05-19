@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ï»¿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -15,19 +15,11 @@
   <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
     <h1 class="text-2xl font-bold text-white">Additional Information Required</h1>
     <p class="text-blue-100 text-sm mt-1">
-      Round <span id="roundNum">1</span> — Application <span id="appIdDisplay" class="font-mono"></span>
+      Round <span id="roundNum">1</span> â€” Application <span id="appIdDisplay" class="font-mono"></span>
     </p>
   </div>
 
   <div class="p-8">
-
-    <!-- Debug Info (íãßä ÅÎÝÇÄå áÇÍÞðÇ) -->
-    <div id="debugPanel" class="mb-4 p-3 bg-slate-100 rounded-lg text-xs font-mono text-slate-600 hidden">
-      <div>App ID: <span id="debugAppId"></span></div>
-      <div>Storage Key: <span id="debugKey"></span></div>
-      <div>Draft Status: <span id="debugStatus"></span></div>
-      <button onclick="testStorage()" class="mt-2 px-2 py-1 bg-blue-600 text-white rounded text-xs">Test Storage</button>
-    </div>
 
     <!-- Loading -->
     <div id="loading" class="text-center py-12">
@@ -60,7 +52,6 @@
 
       <div id="questionsContainer" class="space-y-6"></div>
 
-      <!-- Inline Submit Error -->
       <div id="submitError" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-center">
         <p id="submitErrorMsg" class="text-red-700 text-sm font-medium"></p>
         <button type="button" onclick="hideSubmitError()" class="mt-2 text-xs text-red-500 underline">Dismiss</button>
@@ -92,9 +83,6 @@
 </div>
 
 <script>
-// ?????????????????????????????????????????????
-// CONFIG
-// ?????????????????????????????????????????????
 const N8N_BASE = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev';
 const WEBHOOK_SECRET = 'grant-secure-2026-kimi-key';
 
@@ -102,267 +90,108 @@ const params = new URLSearchParams(location.search);
 const appId = params.get('id') || 'UNKNOWN';
 const round = params.get('round') || '1';
 
-// ?? ÚÑÖ ãÚáæãÇÊ ÇáÊÕÍíÍ ??
 document.getElementById('appIdDisplay').textContent = appId;
 document.getElementById('roundNum').textContent = round;
 document.getElementById('appIdInput').value = appId;
 document.getElementById('roundInput').value = round;
 
-// ?? ãÝÊÇÍ ÇáÊÎÒíä: äÓÊÎÏã appId ãä URL ÏÇÆãðÇ ??
 const STORAGE_KEY = 'grant_draft_' + appId;
-const QUESTIONS_URL = `https://project-n8n-2026.app.n8n.cloud/webhook/questions-x7k9m2p-2026?id=${encodeURIComponent(appId)}`;
+const QUESTIONS_URL = `${N8N_BASE}/questions?id=${encodeURIComponent(appId)}`;
 const SUBMIT_URL = `${N8N_BASE}/clarification`;
 
 let questionsList = [];
 
-// ?? ÊÍÏíË áæÍÉ ÇáÊÕÍíÍ ??
-function updateDebug() {
-  document.getElementById('debugAppId').textContent = appId;
-  document.getElementById('debugKey').textContent = STORAGE_KEY;
-  const hasDraft = localStorage.getItem(STORAGE_KEY);
-  document.getElementById('debugStatus').textContent = hasDraft ? 'Found (' + hasDraft.length + ' chars)' : 'None';
-}
-
-// ?? ÇÎÊÈÇÑ ÇáÊÎÒíä ??
-function testStorage() {
-  try {
-    localStorage.setItem('test_key', 'hello');
-    const val = localStorage.getItem('test_key');
-    localStorage.removeItem('test_key');
-    alert('localStorage works! Value: ' + val);
-  } catch (e) {
-    alert('localStorage FAILED: ' + e.message);
-  }
-}
-
-// ?? ÍÝÙ íÏæí ??
 function saveDraftManual() {
   saveDraft();
   const status = document.getElementById('saveStatus');
-  status.textContent = '? Saved manually';
+  status.textContent = 'âœ“ Saved manually';
   status.className = 'text-xs text-emerald-600 font-semibold';
-  setTimeout(() => {
-    status.textContent = 'Draft saved';
-    status.className = 'text-xs text-slate-400';
-  }, 2000);
-  updateDebug();
+  setTimeout(() => { status.textContent = 'Draft saved'; status.className = 'text-xs text-slate-400'; }, 2000);
 }
 
-// ?? ÍÝÙ ÊáÞÇÆí ??
 function saveDraft() {
   try {
     const textareas = document.querySelectorAll('textarea[name^="answer_"]');
-    if (textareas.length === 0) {
-      console.log('?? No textareas found to save');
-      return;
-    }
-
+    if (textareas.length === 0) return;
     const draft = [];
-    textareas.forEach((ta, i) => {
-      draft.push({
-        index: i,
-        answer: ta.value,
-        question: ta.getAttribute('data-question') || ''
-      });
-    });
-
-    const payload = {
-      appId: appId,
-      round: round,
-      savedAt: new Date().toISOString(),
-      answers: draft
-    };
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-    console.log('?? Saved to', STORAGE_KEY, payload);
-
-    // ÅÙåÇÑ "Saved" ãÄÞÊðÇ
+    textareas.forEach((ta, i) => { draft.push({ index: i, answer: ta.value, question: ta.getAttribute('data-question') || '' }); });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ appId: appId, round: round, savedAt: new Date().toISOString(), answers: draft }));
     const status = document.getElementById('saveStatus');
-    status.textContent = '? Saved';
+    status.textContent = 'âœ“ Saved';
     status.className = 'text-xs text-emerald-600 font-semibold';
-    setTimeout(() => {
-      status.textContent = 'Draft saved';
-      status.className = 'text-xs text-slate-400';
-    }, 1500);
-
-    updateDebug();
-  } catch (e) {
-    console.error('? Failed to save draft:', e);
-    alert('Cannot save draft: ' + e.message);
-  }
+    setTimeout(() => { status.textContent = 'Draft saved'; status.className = 'text-xs text-slate-400'; }, 1500);
+  } catch (e) { console.error('Save failed:', e); }
 }
 
-// ?? ÇÓÊÑÌÇÚ ÇáãÓæÏÉ ??
 function restoreDraft() {
   try {
-    console.log('?? Looking for draft with key:', STORAGE_KEY);
     const raw = localStorage.getItem(STORAGE_KEY);
-    
-    if (!raw) {
-      console.log('?? No draft found');
-      return false;
-    }
-
+    if (!raw) return false;
     const draft = JSON.parse(raw);
-    console.log('?? Found draft:', draft);
-
-    if (!draft.answers || !Array.isArray(draft.answers)) {
-      console.log('?? Draft has no answers array');
-      return false;
-    }
-
+    if (!draft.answers || !Array.isArray(draft.answers)) return false;
     const textareas = document.querySelectorAll('textarea[name^="answer_"]');
     let restoredCount = 0;
-
-    draft.answers.forEach(item => {
-      const ta = textareas[item.index];
-      if (ta && item.answer) {
-        ta.value = item.answer;
-        restoredCount++;
-        console.log('? Restored answer', item.index);
-      }
-    });
-
+    draft.answers.forEach(item => { const ta = textareas[item.index]; if (ta && item.answer) { ta.value = item.answer; restoredCount++; } });
     if (restoredCount > 0) {
       const status = document.getElementById('saveStatus');
-      status.textContent = '? ' + restoredCount + ' restored';
+      status.textContent = 'âœ“ ' + restoredCount + ' restored';
       status.className = 'text-xs text-blue-600 font-semibold';
-      console.log('? Restored', restoredCount, 'answers');
     }
-
-    updateDebug();
     return restoredCount > 0;
-  } catch (e) {
-    console.error('? Failed to restore draft:', e);
-    return false;
-  }
+  } catch (e) { console.error('Restore failed:', e); return false; }
 }
 
-// ?? ÅÎÝÇÁ ÎØÃ ÇáÅÑÓÇá ??
-function hideSubmitError() {
-  document.getElementById('submitError').classList.add('hidden');
-}
+function hideSubmitError() { document.getElementById('submitError').classList.add('hidden'); }
 
-// ?? ÊÍãíá ÇáÃÓÆáÉ ??
 async function loadQuestions() {
   try {
-    console.log('?? Fetching questions from:', QUESTIONS_URL);
-    const res = await fetch(QUESTIONS_URL, {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-
+    const res = await fetch(QUESTIONS_URL, { method: 'GET', headers: { 'Accept': 'application/json' } });
     if (!res.ok) throw new Error('Server returned ' + res.status);
-
     const data = await res.json();
-    console.log('?? Raw response:', data);
-
     let rawQuestions = null;
-
-    if (data.json && data.json.questions) {
-      rawQuestions = data.json.questions;
-    } else if (data.questions) {
-      rawQuestions = data.questions;
-    } else if (data.json && data.json.clarification_questions) {
-      rawQuestions = data.json.clarification_questions;
-    } else if (data.clarification_questions) {
-      rawQuestions = data.clarification_questions;
-    }
-
-    if (typeof rawQuestions === 'string') {
-      try {
-        const parsed = JSON.parse(rawQuestions);
-        rawQuestions = parsed.questions || parsed;
-      } catch (e) {
-        rawQuestions = [];
-      }
-    }
-
-    if (rawQuestions && typeof rawQuestions === 'object' && !Array.isArray(rawQuestions) && rawQuestions.questions) {
-      rawQuestions = rawQuestions.questions;
-    }
-
+    if (data.json && data.json.questions) rawQuestions = data.json.questions;
+    else if (data.questions) rawQuestions = data.questions;
+    else if (data.json && data.json.clarification_questions) rawQuestions = data.json.clarification_questions;
+    else if (data.clarification_questions) rawQuestions = data.clarification_questions;
+    if (typeof rawQuestions === 'string') { try { const parsed = JSON.parse(rawQuestions); rawQuestions = parsed.questions || parsed; } catch (e) { rawQuestions = []; } }
+    if (rawQuestions && typeof rawQuestions === 'object' && !Array.isArray(rawQuestions) && rawQuestions.questions) rawQuestions = rawQuestions.questions;
     questionsList = Array.isArray(rawQuestions) ? rawQuestions : [];
-
-    if (questionsList.length === 0) {
-      showNoQuestions();
-      return;
-    }
-
-    renderQuestions();
-    
-    // ÇÓÊÑÌÚ ÇáãÓæÏÉ ÈÚÏ ÑÓã ÇáÃÓÆáÉ
-    const restored = restoreDraft();
-    console.log('?? Restore result:', restored);
-
+    if (questionsList.length === 0) { showNoQuestions(); return; }
+    renderQuestions(); restoreDraft();
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('clarificationForm').classList.remove('hidden');
-    updateDebug();
-
   } catch (err) {
-    console.error('? Load error:', err);
+    console.error('Load error:', err);
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('loadError').classList.remove('hidden');
     document.getElementById('loadErrorMsg').textContent = err.message || 'Unable to load questions.';
   }
 }
 
-// ?? ÑÓã ÇáÃÓÆáÉ ??
 function renderQuestions() {
   const container = document.getElementById('questionsContainer');
   container.innerHTML = '';
-
   questionsList.forEach((q, i) => {
     const questionText = typeof q === 'string' ? q : (q.question || q.text || JSON.stringify(q));
-
     const div = document.createElement('div');
     div.className = 'bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3';
-    div.innerHTML = `
-      <div class="flex items-start gap-3">
-        <span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">${i + 1}</span>
-        <p class="text-slate-800 font-medium leading-relaxed pt-1">${escapeHtml(questionText)}</p>
-      </div>
-      <textarea
-        name="answer_${i}"
-        data-question="${escapeHtml(questionText)}"
-        required
-        rows="4"
-        class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-700 bg-white"
-        placeholder="Type your detailed answer here..."
-      ></textarea>
-    `;
+    div.innerHTML = `<div class="flex items-start gap-3"><span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">${i + 1}</span><p class="text-slate-800 font-medium leading-relaxed pt-1">${escapeHtml(questionText)}</p></div><textarea name="answer_${i}" data-question="${escapeHtml(questionText)}" required rows="4" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-700 bg-white" placeholder="Type your detailed answer here..."></textarea>`;
     container.appendChild(div);
   });
-
-  // ÑÈØ ÍÏË ÇáÍÝÙ ÇáÊáÞÇÆí
-  document.querySelectorAll('textarea[name^="answer_"]').forEach(ta => {
-    ta.addEventListener('input', saveDraft);
-  });
+  document.querySelectorAll('textarea[name^="answer_"]').forEach(ta => { ta.addEventListener('input', saveDraft); });
 }
 
 function showNoQuestions() {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('clarificationForm').classList.remove('hidden');
   document.getElementById('submitBtn').classList.add('hidden');
-
-  document.getElementById('questionsContainer').innerHTML = `
-    <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
-      <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-        <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-      </div>
-      <h3 class="text-lg font-semibold text-emerald-800">No Clarification Needed</h3>
-      <p class="text-emerald-600 mt-1">Your application is clear and complete. Proceeding to evaluation.</p>
-    </div>
-  `;
+  document.getElementById('questionsContainer').innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center"><div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3"><svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><h3 class="text-lg font-semibold text-emerald-800">No Clarification Needed</h3><p class="text-emerald-600 mt-1">Your application is clear and complete. Proceeding to evaluation.</p></div>`;
 }
 
-// ?? ÅÑÓÇá ÇáÅÌÇÈÇÊ ??
+// â”€â”€ Ø§Ù„Ø¥Ø±Ø³Ø§Ù„ Ø§Ù„Ù…ÙØµÙ„Ø­ â”€â”€
 document.getElementById('clarificationForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   hideSubmitError();
-
   const btn = document.getElementById('submitBtn');
   const spinner = document.getElementById('spinner');
   btn.disabled = true;
@@ -370,74 +199,53 @@ document.getElementById('clarificationForm').addEventListener('submit', async (e
 
   const answersArray = [];
   const textareas = document.querySelectorAll('textarea[name^="answer_"]');
+  textareas.forEach((ta, i) => { answersArray.push({ question: ta.getAttribute('data-question') || questionsList[i] || `Question ${i + 1}`, answer: ta.value.trim() }); });
 
-  textareas.forEach((ta, i) => {
-    answersArray.push({
-      question: ta.getAttribute('data-question') || questionsList[i] || `Question ${i + 1}`,
-      answer: ta.value.trim()
-    });
-  });
-
-  const payload = {
-    application_id: appId,
-    clarification_round: parseInt(round),
-    answers: answersArray,
-    received_at: new Date().toISOString()
-  };
+  const payload = { application_id: appId, clarification_round: parseInt(round), answers: answersArray, received_at: new Date().toISOString() };
 
   try {
     const res = await fetch(SUBMIT_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Webhook-Secret': WEBHOOK_SECRET  
-      },
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Webhook-Secret': WEBHOOK_SECRET },
       body: JSON.stringify(payload)
     });
 
+    // â”€â”€ Ù…Ø¹Ø§Ù„Ø¬Ø© Ø£ÙŠ Ø±Ø¯ (JSON Ø£Ùˆ Ù†Øµ) â”€â”€
     const text = await res.text();
     let data = {};
-    try {
-      data = JSON.parse(text);
-    } catch {
-      data = { raw: text.substring(0, 200) };
-    }
+    try { data = JSON.parse(text); } catch { data = { raw: text }; }
 
-    if (!res.ok || data.error === true || data.error_code) {
+    console.log('ðŸ“¥ Server response:', res.status, data);
+
+    // â”€â”€ Ø§Ù„ØªØ­Ù‚Ù‚ Ù…Ù† Ø§Ù„Ù†Ø¬Ø§Ø­: ÙŠÙ‚Ø¨Ù„ {success: true} Ø£Ùˆ {status: "clarification_received"} â”€â”€
+    const isSuccess = res.ok && (data.success === true || data.status === 'clarification_received' || (!data.error && !data.error_code));
+    const isError = data.error === true || data.error_code || (!res.ok && data.success !== true);
+
+    if (isError) {
       throw new Error(data.message || data.error_code || 'Server error: ' + res.status);
     }
+    if (!isSuccess) {
+      throw new Error('Unexpected response: ' + JSON.stringify(data).substring(0, 100));
+    }
 
-    // ? äÌÇÍ: ÇãÓÍ ÇáãÓæÏÉ
+    //  Ù†Ø¬Ø§Ø­
     localStorage.removeItem(STORAGE_KEY);
-    console.log('??? Draft cleared');
-    
     document.getElementById('clarificationForm').classList.add('hidden');
     document.getElementById('result').classList.remove('hidden');
 
   } catch (err) {
-    console.error('? Submit error:', err);
-    
+    console.error(' Submit error:', err);
     btn.disabled = false;
     spinner.classList.add('hidden');
-    
     const errorBox = document.getElementById('submitError');
     const errorMsg = document.getElementById('submitErrorMsg');
     errorBox.classList.remove('hidden');
-    errorMsg.textContent = (err.message || 'Submission failed') + '. Your answers are saved in this browser — you can try again.';
+    errorMsg.textContent = (err.message || 'Submission failed') + '. Your answers are saved in this browser â€” you can try again.';
   }
 });
 
-function escapeHtml(text) {
-  if (!text) return '';
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
+function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
 
-// ?? ÈÏÁ ÇáÊÔÛíá ??
-console.log('?? Page loaded. App ID:', appId, 'Storage Key:', STORAGE_KEY);
-updateDebug();
 loadQuestions();
 </script>
 
