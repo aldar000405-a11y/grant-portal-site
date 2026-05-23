@@ -3,62 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clarification Response</title>
+  <title>Grant Portal - Clarification Responses</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>body{font-family:'Inter',sans-serif;}</style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); }
+    .glass-effect { backdrop-filter: blur(10px); background: rgba(255,255,255,0.95); }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-in { animation: fadeIn 0.5s ease-out; }
+    .question-card { transition: all 0.3s ease; }
+    .question-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 99, 235, 0.15); }
+    textarea:focus { transform: scale(1.01); }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen flex items-center justify-center p-4">
 
-<div class="w-full max-w-3xl bg-white rounded-2xl shadow-xl overflow-hidden">
+<div class="w-full max-w-4xl glass-effect rounded-2xl shadow-2xl overflow-hidden border border-white/50">
 
-  <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
-    <h1 class="text-2xl font-bold text-white">Additional Information Required</h1>
-    <p class="text-blue-100 text-sm mt-1">
-      Round <span id="roundNum">1</span> — Application <span id="appIdDisplay" class="font-mono"></span>
-    </p>
+  <!-- Header -->
+  <div class="gradient-bg px-8 py-8 text-center relative overflow-hidden">
+    <div class="absolute inset-0 bg-white/10 transform -skew-y-3"></div>
+    <div class="relative z-10">
+      <h1 class="text-2xl font-bold text-white mb-2">Clarification Questions</h1>
+      <p class="text-blue-100 text-sm">
+        Round <span id="roundNum" class="font-bold bg-white/20 px-2 py-1 rounded">1</span> - Application ID <span id="appIdDisplay" class="font-mono bg-white/20 px-2 py-1 rounded"></span>
+      </p>
+    </div>
   </div>
 
   <div class="p-8">
 
     <!-- Loading -->
-    <div id="loading" class="text-center py-12">
-      <div class="w-10 h-10 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-      <p class="text-slate-500">Loading questions...</p>
+    <div id="loading" class="text-center py-16">
+      <div class="relative w-16 h-16 mx-auto mb-6">
+        <div class="absolute inset-0 border-4 border-blue-200 rounded-full"></div>
+        <div class="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin"></div>
+      </div>
+      <p class="text-slate-500 font-medium">Loading questions...</p>
+      <p class="text-slate-400 text-xs mt-2">Please wait</p>
     </div>
 
     <!-- Load Error -->
-    <div id="loadError" class="hidden bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-      <h3 class="text-lg font-semibold text-red-800">Failed to Load Questions</h3>
-      <p id="loadErrorMsg" class="text-red-600 mt-1"></p>
-      <button onclick="location.reload()" class="mt-3 px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition">Try Again</button>
+    <div id="loadError" class="hidden bg-red-50 border-2 border-red-200 rounded-2xl p-8 text-center animate-fade-in">
+      <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-red-800 mb-2">Failed to Load Questions</h3>
+      <p id="loadErrorMsg" class="text-red-600 mb-6"></p>
+      <div class="flex gap-3 justify-center">
+        <button onclick="location.reload()" class="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-bold shadow-lg">
+          Try Again
+        </button>
+        <button onclick="window.history.back()" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-bold">
+          Back
+        </button>
+      </div>
     </div>
 
-    <!-- Form -->
+    <!-- Main Form -->
     <form id="clarificationForm" class="hidden space-y-6">
-      
-      <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 flex justify-between items-center">
-        <p class="text-amber-800 text-sm">
-          Please answer <strong>all</strong> questions below in detail.
-        </p>
-        <div class="flex items-center gap-2">
-          <span id="saveStatus" class="text-xs text-slate-400">Ready</span>
-          <button type="button" onclick="saveDraftManual()" class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition">Save Now</button>
+
+      <!-- Info Banner -->
+      <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-5 flex items-start gap-3">
+        <div class="flex-shrink-0 w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
+          <svg class="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+        </div>
+        <div>
+          <h4 class="font-bold text-amber-800 mb-1">Important Instructions</h4>
+          <p class="text-amber-700 text-sm leading-relaxed">
+            Please answer <strong>all</strong> questions in detail. Your answers directly affect the final evaluation.
+            <span class="block mt-1 text-amber-600">Minimum 30 characters per answer.</span>
+          </p>
         </div>
       </div>
 
       <input type="hidden" name="application_id" id="appIdInput">
       <input type="hidden" name="clarification_round" id="roundInput">
 
+      <!-- Progress Bar -->
+      <div class="bg-slate-100 rounded-full h-2 overflow-hidden">
+        <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+      </div>
+      <p class="text-xs text-slate-400 text-center" id="progressText">Answered 0 of 0 questions</p>
+
       <div id="questionsContainer" class="space-y-6"></div>
 
-      <div id="submitError" class="hidden bg-red-50 border border-red-200 rounded-lg p-4 text-center">
-        <p id="submitErrorMsg" class="text-red-700 text-sm font-medium"></p>
-        <button type="button" onclick="hideSubmitError()" class="mt-2 text-xs text-red-500 underline">Dismiss</button>
+      <!-- Inline Message — يعرض الاستجابة الديناميكية دائماً -->
+      <div id="inlineMessage" class="hidden rounded-xl p-5 border-2 animate-fade-in">
+        <div class="text-center">
+          <div id="inlineIcon" class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3 shadow"></div>
+          <h3 id="inlineTitle" class="text-xl font-bold text-slate-800 mb-2"></h3>
+          <p id="inlineBody" class="text-sm text-slate-600 mb-3"></p>
+          <div id="inlineDetails" class="hidden text-left bg-white/70 rounded-lg p-3 border border-slate-200/60 mb-3"></div>
+          <div id="inlineNextSteps" class="hidden text-left bg-amber-50 border border-amber-200 rounded-lg p-2 mb-3"></div>
+          <div id="inlineActions" class="flex gap-3 justify-center flex-wrap"></div>
+        </div>
       </div>
 
-      <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition flex items-center justify-center gap-2">
-        <span>Submit All Answers</span>
+      <!-- Submit Button -->
+      <button type="submit" id="submitBtn"
+        class="w-full gradient-bg text-white font-bold py-3 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg transform hover:scale-[1.02]">
+        <span id="btnText">Submit Answers</span>
         <svg id="spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
           <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
@@ -66,26 +116,86 @@
       </button>
     </form>
 
-    <!-- Success -->
-    <div id="result" class="hidden mt-6">
-      <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
-        <div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-emerald-800">Answers Submitted!</h3>
-        <p class="text-emerald-600 mt-1">Thank you. Your application will now proceed to final evaluation.</p>
-      </div>
-    </div>
-
   </div>
 </div>
 
 <script>
-const N8N_BASE = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev';
-const WEBHOOK_SECRET = 'grant-secure-2026-kimi-key';
+// ═══════════════════════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════════════════════
+const PROXY_BASE = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev';
+const WEBHOOK_SECRET = 'grant-prod-2026-secure-key';
+const REQUEST_TIMEOUT = 120000;
+const MAX_RETRIES = 2;
+const MIN_ANSWER_LENGTH = 30;
 
+// ═══════════════════════════════════════════════════════
+// ERROR REPORTING
+// ═══════════════════════════════════════════════════════
+const ERROR_WEBHOOK = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/error-report-x7k9m2p-2026';
+
+async function reportError(errorType, errorMessage, details = {}) {
+  try {
+    await fetch(ERROR_WEBHOOK, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
+      },
+      body: JSON.stringify({
+        workflow_name: 'Grant Application Portal',
+        node_name: 'Frontend_' + errorType,
+        node_type: 'browser',
+        error_message: errorMessage,
+        error_description: details.description || '',
+        user_email: details.email || document.querySelector('[name="email"]')?.value || 'Unknown',
+        user_ip: 'client-side',
+        application_id: details.applicationId || 'N/A',
+        request_url: window.location.href,
+        request_method: 'CLIENT_ERROR',
+        request_payload: details,
+        environment: 'production'
+      })
+    });
+  } catch (e) {
+    console.error('Failed to report error:', e);
+  }
+}
+
+function detectAIError(response) {
+  if (response.status === 429 || response.status === 403) {
+    reportError('AI_SERVICE', 'AI API quota exceeded or rate limited', {
+      description: 'Gemini API returned ' + response.status,
+      status: response.status
+    });
+    return true;
+  }
+  if (response.status >= 500 && response.status < 600) {
+    reportError('AI_SERVICE', 'AI service unavailable', {
+      description: 'Gemini server error: ' + response.status
+    });
+    return true;
+  }
+  return false;
+}
+
+window.addEventListener('error', function(event) {
+  reportError('UNKNOWN', event.message, {
+    description: event.filename + ':' + event.lineno,
+    stack: event.error?.stack
+  });
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+  reportError('UNKNOWN', 'Unhandled Promise Rejection', {
+    description: event.reason?.message || String(event.reason),
+    stack: event.reason?.stack
+  });
+});
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
 const params = new URLSearchParams(location.search);
 const appId = params.get('id') || 'UNKNOWN';
 const round = params.get('round') || '1';
@@ -95,159 +205,496 @@ document.getElementById('roundNum').textContent = round;
 document.getElementById('appIdInput').value = appId;
 document.getElementById('roundInput').value = round;
 
-const STORAGE_KEY = 'grant_draft_' + appId;
-const QUESTIONS_URL = `${N8N_BASE}/questions?id=${encodeURIComponent(appId)}`;
-const SUBMIT_URL = `${N8N_BASE}/clarification`;
+const QUESTIONS_URL = `${PROXY_BASE}/questions?id=${encodeURIComponent(appId)}`;
+const SUBMIT_URL = `${PROXY_BASE}/clarify-x7k9m2p-2026`;
 
 let questionsList = [];
+let answersData = {};
 
-function saveDraftManual() {
-  saveDraft();
-  const status = document.getElementById('saveStatus');
-  status.textContent = '✓ Saved manually';
-  status.className = 'text-xs text-emerald-600 font-semibold';
-  setTimeout(() => { status.textContent = 'Draft saved'; status.className = 'text-xs text-slate-400'; }, 2000);
-}
-
-function saveDraft() {
-  try {
-    const textareas = document.querySelectorAll('textarea[name^="answer_"]');
-    if (textareas.length === 0) return;
-    const draft = [];
-    textareas.forEach((ta, i) => { draft.push({ index: i, answer: ta.value, question: ta.getAttribute('data-question') || '' }); });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ appId: appId, round: round, savedAt: new Date().toISOString(), answers: draft }));
-    const status = document.getElementById('saveStatus');
-    status.textContent = '✓ Saved';
-    status.className = 'text-xs text-emerald-600 font-semibold';
-    setTimeout(() => { status.textContent = 'Draft saved'; status.className = 'text-xs text-slate-400'; }, 1500);
-  } catch (e) { console.error('Save failed:', e); }
-}
-
-function restoreDraft() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    const draft = JSON.parse(raw);
-    if (!draft.answers || !Array.isArray(draft.answers)) return false;
-    const textareas = document.querySelectorAll('textarea[name^="answer_"]');
-    let restoredCount = 0;
-    draft.answers.forEach(item => { const ta = textareas[item.index]; if (ta && item.answer) { ta.value = item.answer; restoredCount++; } });
-    if (restoredCount > 0) {
-      const status = document.getElementById('saveStatus');
-      status.textContent = '✓ ' + restoredCount + ' restored';
-      status.className = 'text-xs text-blue-600 font-semibold';
-    }
-    return restoredCount > 0;
-  } catch (e) { console.error('Restore failed:', e); return false; }
-}
-
-function hideSubmitError() { document.getElementById('submitError').classList.add('hidden'); }
-
+// ═══════════════════════════════════════════════════════
+// LOAD QUESTIONS
+// ═══════════════════════════════════════════════════════
 async function loadQuestions() {
   try {
-    const res = await fetch(QUESTIONS_URL, { method: 'GET', headers: { 'Accept': 'application/json' } });
-    if (!res.ok) throw new Error('Server returned ' + res.status);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+    const res = await fetch(QUESTIONS_URL, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
+      },
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    if (!res.ok) {
+      const body = await res.text();
+      throw new Error('Server ' + res.status + ': ' + body.substring(0, 120));
+    }
+
     const data = await res.json();
-    let rawQuestions = null;
-    if (data.json && data.json.questions) rawQuestions = data.json.questions;
-    else if (data.questions) rawQuestions = data.questions;
-    else if (data.json && data.json.clarification_questions) rawQuestions = data.json.clarification_questions;
-    else if (data.clarification_questions) rawQuestions = data.clarification_questions;
-    if (typeof rawQuestions === 'string') { try { const parsed = JSON.parse(rawQuestions); rawQuestions = parsed.questions || parsed; } catch (e) { rawQuestions = []; } }
-    if (rawQuestions && typeof rawQuestions === 'object' && !Array.isArray(rawQuestions) && rawQuestions.questions) rawQuestions = rawQuestions.questions;
-    questionsList = Array.isArray(rawQuestions) ? rawQuestions : [];
-    if (questionsList.length === 0) { showNoQuestions(); return; }
-    renderQuestions(); restoreDraft();
+    let raw = extractQuestions(data);
+    questionsList = Array.isArray(raw) ? raw : [];
+
+    if (!questionsList || questionsList.length === 0) {
+      showNoQuestions();
+      return;
+    }
+
+    renderQuestions();
+    updateProgress();
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('clarificationForm').classList.remove('hidden');
+
   } catch (err) {
     console.error('Load error:', err);
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('loadError').classList.remove('hidden');
-    document.getElementById('loadErrorMsg').textContent = err.message || 'Unable to load questions.';
+
+    let msg = err.message || 'Unable to load questions.';
+    if (err.name === 'AbortError') {
+      msg = 'Request timed out. The server is taking too long.';
+    } else if (err.name === 'TypeError') {
+      msg = 'Cannot connect to server. Please check your internet connection.';
+    }
+
+    document.getElementById('loadErrorMsg').textContent = msg;
   }
 }
 
+function extractQuestions(data) {
+  if (Array.isArray(data)) return data;
+  if (Array.isArray(data.questions)) return data.questions;
+  if (data.json && Array.isArray(data.json.questions)) return data.json.questions;
+  if (Array.isArray(data.clarification_questions)) return data.clarification_questions;
+  if (data.json && Array.isArray(data.json.clarification_questions)) return data.json.clarification_questions;
+
+  if (typeof data === 'string') {
+    try { 
+      const parsed = JSON.parse(data);
+      return extractQuestions(parsed);
+    } catch(e) { return []; }
+  }
+
+  if (data && !Array.isArray(data) && Array.isArray(data.questions)) return data.questions;
+  return [];
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER QUESTIONS
+// ═══════════════════════════════════════════════════════
 function renderQuestions() {
   const container = document.getElementById('questionsContainer');
   container.innerHTML = '';
+
   questionsList.forEach((q, i) => {
-    const questionText = typeof q === 'string' ? q : (q.question || q.text || JSON.stringify(q));
+    const text = typeof q === 'string' ? q : (q.question || q.text || JSON.stringify(q));
     const div = document.createElement('div');
-    div.className = 'bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-3';
-    div.innerHTML = `<div class="flex items-start gap-3"><span class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">${i + 1}</span><p class="text-slate-800 font-medium leading-relaxed pt-1">${escapeHtml(questionText)}</p></div><textarea name="answer_${i}" data-question="${escapeHtml(questionText)}" required rows="4" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-700 bg-white" placeholder="Type your detailed answer here..."></textarea>`;
+    div.className = 'question-card bg-white border-2 border-slate-100 rounded-2xl p-6 space-y-4 shadow-sm';
+    div.innerHTML = `
+      <div class="flex items-start gap-4">
+        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-xl flex items-center justify-center text-lg font-bold shadow-lg">
+          ${i + 1}
+        </div>
+        <div class="flex-1 pt-2">
+          <p class="text-slate-800 font-bold text-lg leading-relaxed">${escHtml(text)}</p>
+          <p class="text-slate-400 text-xs mt-1">At least ${MIN_ANSWER_LENGTH} characters</p>
+        </div>
+      </div>
+      <div class="relative">
+        <textarea
+          name="answer_${i}"
+          data-question="${escHtml(text)}"
+          data-index="${i}"
+          required
+          rows="5"
+          class="w-full px-5 py-4 border-2 border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-slate-700 bg-slate-50/50 text-left transition-all duration-300"
+          placeholder="Type your detailed answer here..."
+        ></textarea>
+        <div class="absolute bottom-3 left-3 text-xs text-slate-400">
+          <span class="char-count">0</span> chars
+        </div>
+      </div>
+      <div class="validation-msg hidden text-red-500 text-sm flex items-center gap-1">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        Answer is too short
+      </div>
+    `;
     container.appendChild(div);
   });
-  document.querySelectorAll('textarea[name^="answer_"]').forEach(ta => { ta.addEventListener('input', saveDraft); });
+
+  document.querySelectorAll('textarea[data-index]').forEach(ta => {
+    ta.addEventListener('input', function() {
+      const index = this.getAttribute('data-index');
+      const length = this.value.trim().length;
+      const card = this.closest('.question-card');
+      const charCount = card.querySelector('.char-count');
+      const validationMsg = card.querySelector('.validation-msg');
+
+      charCount.textContent = length;
+
+      if (length >= MIN_ANSWER_LENGTH) {
+        charCount.classList.add('text-emerald-600');
+        charCount.classList.remove('text-red-500');
+        validationMsg.classList.add('hidden');
+        this.classList.remove('border-red-300');
+        this.classList.add('border-slate-200');
+      } else {
+        charCount.classList.add('text-red-500');
+        charCount.classList.remove('text-emerald-600');
+      }
+
+      answersData[index] = this.value.trim();
+      updateProgress();
+    });
+  });
+}
+
+function updateProgress() {
+  const total = questionsList.length;
+  const answered = Object.values(answersData).filter(a => a.length >= MIN_ANSWER_LENGTH).length;
+  const percent = total > 0 ? (answered / total) * 100 : 0;
+
+  document.getElementById('progressBar').style.width = percent + '%';
+  document.getElementById('progressText').textContent = `Answered ${answered} of ${total} questions`;
 }
 
 function showNoQuestions() {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('clarificationForm').classList.remove('hidden');
   document.getElementById('submitBtn').classList.add('hidden');
-  document.getElementById('questionsContainer').innerHTML = `<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center"><div class="w-14 h-14 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3"><svg class="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><h3 class="text-lg font-semibold text-emerald-800">No Clarification Needed</h3><p class="text-emerald-600 mt-1">Your application is clear and complete. Proceeding to evaluation.</p></div>`;
+  document.getElementById('questionsContainer').innerHTML = `
+    <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl p-8 text-center animate-fade-in">
+      <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-bold text-emerald-800 mb-2">No Clarification Needed</h3>
+      <p class="text-emerald-600">Your application is clear and complete. Proceeding to evaluation.</p>
+    </div>`;
 }
 
-// ── الإرسال المُصلح ──
+// ═══════════════════════════════════════════════════════
+// RENDER RESPONSE — يعرض الاستجابة الديناميكية دائماً
+// ═══════════════════════════════════════════════════════
+function renderResponse(data) {
+  const box = document.getElementById('inlineMessage');
+  const icon = document.getElementById('inlineIcon');
+  const title = document.getElementById('inlineTitle');
+  const body = document.getElementById('inlineBody');
+  const details = document.getElementById('inlineDetails');
+  const nextSteps = document.getElementById('inlineNextSteps');
+  const actions = document.getElementById('inlineActions');
+
+  // ── إخفاء النموذج دائماً بعد استلام الاستجابة ──
+  document.getElementById('questionsContainer').classList.add('hidden');
+  document.getElementById('submitBtn').classList.add('hidden');
+  document.getElementById('progressBar').parentElement.classList.add('hidden');
+  document.getElementById('progressText').classList.add('hidden');
+
+  // ── التعامل مع string JSON غير متوقع ──
+  if (typeof data === 'string') {
+    try { data = JSON.parse(data); } catch (e) {}
+  }
+  if (!data || typeof data !== 'object') {
+    data = { success: false, error: true, message: 'Invalid response from server' };
+  }
+
+  const isSuccess = data.success === true;
+  const isRejection = data.success === false && (data.status === 'rejected' || data.rejection_code);
+  const isCooldown = data.error_code === 'COOLDOWN_PERIOD_ACTIVE' || data.error_code === 'REJECTION_LIMIT_REACHED';
+  const isError = data.error === true || (data.success === false && !isRejection && !isCooldown);
+
+  let cardClass, iconSvg, titleText, messageText, btnHtml;
+
+  if (isSuccess) {
+    cardClass = 'bg-emerald-50 border-emerald-200';
+    iconSvg = '<svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+    titleText = data.message || 'Answers Submitted Successfully';
+    messageText = data.reason || data.next_steps || data.status || 'Your application has been received.';
+    btnHtml = `<button onclick="window.location.reload()" class="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-bold shadow">Submit Another Response</button>`;
+  } else if (isRejection) {
+    cardClass = 'bg-red-50 border-red-200';
+    iconSvg = '<svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+    titleText = data.message || 'Application Rejected';
+    messageText = data.reason || data.next_steps || 'Your application was not accepted.';
+    btnHtml = `
+      <button onclick="window.location.reload()" class="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-bold shadow">Try Again</button>
+      <button onclick="window.history.back()" class="px-6 py-3 bg-slate-200 text-slate-700 rounded-xl hover:bg-slate-300 transition font-bold">Back</button>
+    `;
+  } else if (isCooldown) {
+    cardClass = 'bg-amber-50 border-amber-200';
+    iconSvg = '<svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    titleText = data.message || 'Cooldown Period Active';
+    messageText = data.reason || data.next_steps || 'You cannot apply right now.';
+    btnHtml = `<button onclick="window.location.reload()" class="px-6 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition font-bold shadow">Check Again</button>`;
+  } else {
+    cardClass = 'bg-amber-50 border-amber-200';
+    iconSvg = '<svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+    titleText = data.error_code || 'Error';
+    messageText = data.message || 'An error occurred while processing your answers.';
+    btnHtml = `<button onclick="window.location.reload()" class="px-6 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition font-bold shadow">Try Again</button>`;
+  }
+
+  // ── بناء تفاصيل إضافية من جميع الحقول المهمة ──
+  let detailsHtml = '';
+  const priorityKeys = [
+    'application_id', 'status', 'error_code', 'rejection_code', 'stage', 
+    'total_rejections', 'effective_rejections', 'days_remaining', 
+    'next_eligible_date', 'eligible_after', 'next_reapply_date',
+    'previous_application_id', 'previous_approved_application',
+    'rejected_at', 'scored_at', 'tier', 'total_score',
+    'committee_notified', 'applicant_notified'
+  ];
+  const allKeys = [...new Set([...priorityKeys, ...Object.keys(data)])];
+  const skipKeys = ['success', 'error', 'message', 'reason', 'next_steps'];
+
+  for (const key of allKeys) {
+    if (data[key] === undefined || data[key] === null) continue;
+    if (skipKeys.includes(key)) continue;
+
+    let value = data[key];
+    let label = translateKey(key);
+
+    if (key.includes('date') || key.includes('_at')) {
+      try { value = new Date(value).toLocaleString('en-US'); } catch(e) {}
+    }
+    if (key.includes('amount') || key.includes('budget') || key.includes('funding')) {
+      const num = parseFloat(value);
+      if (!isNaN(num) && num > 0) value = '$' + num.toLocaleString();
+    }
+    if (typeof value === 'object') {
+      value = JSON.stringify(value).substring(0, 200);
+    }
+
+    const isImportant = ['error_code', 'rejection_code', 'total_rejections', 'days_remaining'].includes(key);
+    const valueClass = isImportant ? 'font-bold text-red-700' : 'text-slate-700';
+
+    detailsHtml += `
+      <div class="flex justify-between border-b border-slate-100 py-2 last:border-0">
+        <span class="text-slate-500 text-sm">${escHtml(label)}</span>
+        <span class="${valueClass} text-sm font-mono text-right">${escHtml(String(value))}</span>
+      </div>`;
+  }
+
+  // ── تطبيق الألوان والمحتوى ──
+  box.className = 'rounded-xl p-6 border-2 animate-fade-in ' + cardClass;
+  icon.className = 'w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-4 shadow';
+  icon.innerHTML = iconSvg;
+  title.textContent = titleText;
+  body.textContent = messageText;
+
+  if (detailsHtml) {
+    details.innerHTML = detailsHtml;
+    details.classList.remove('hidden');
+  } else {
+    details.classList.add('hidden');
+    details.innerHTML = '';
+  }
+
+  if (data.next_steps) {
+    nextSteps.innerHTML = `<p class="text-amber-800 text-sm font-bold">Next steps:</p><p class="text-amber-700 text-sm mt-1">${escHtml(data.next_steps)}</p>`;
+    nextSteps.classList.remove('hidden');
+  } else {
+    nextSteps.classList.add('hidden');
+    nextSteps.innerHTML = '';
+  }
+
+  actions.innerHTML = btnHtml;
+  actions.classList.remove('hidden');
+
+  box.classList.remove('hidden');
+  box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function translateKey(key) {
+  const translations = {
+    application_id: 'Application ID',
+    status: 'Status',
+    error_code: 'Error Code',
+    rejection_code: 'Rejection Code',
+    stage: 'Stage',
+    total_rejections: 'Total Rejections',
+    effective_rejections: 'Effective Rejections',
+    days_remaining: 'Days Remaining',
+    next_eligible_date: 'Next Eligible Date',
+    eligible_after: 'Eligible After',
+    next_reapply_date: 'Next Reapply Date',
+    previous_application_id: 'Previous Application ID',
+    previous_approved_application: 'Previous Approved Application',
+    rejected_at: 'Rejected At',
+    scored_at: 'Scored At',
+    tier: 'Tier',
+    total_score: 'Total Score',
+    committee_notified: 'Committee Notified',
+    applicant_notified: 'Applicant Notified'
+  };
+  return translations[key] || key.replace(/_/g, ' ');
+}
+
+function hideInlineMessage() {
+  document.getElementById('inlineMessage').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════════════════════
+// VALIDATE ANSWERS
+// ═══════════════════════════════════════════════════════
+function validateAnswers() {
+  const errors = [];
+  document.querySelectorAll('textarea[data-index]').forEach(ta => {
+    const index = parseInt(ta.getAttribute('data-index'));
+    const length = ta.value.trim().length;
+    const card = ta.closest('.question-card');
+    const validationMsg = card.querySelector('.validation-msg');
+
+    if (length < MIN_ANSWER_LENGTH) {
+      errors.push({ index: index + 1, length: length });
+      validationMsg.classList.remove('hidden');
+      ta.classList.add('border-red-300');
+      ta.classList.remove('border-slate-200');
+    } else {
+      validationMsg.classList.add('hidden');
+      ta.classList.remove('border-red-300');
+      ta.classList.add('border-slate-200');
+    }
+  });
+  return errors;
+}
+
+// ═══════════════════════════════════════════════════════
+// SUBMIT
+// ═══════════════════════════════════════════════════════
 document.getElementById('clarificationForm').addEventListener('submit', async (e) => {
   e.preventDefault();
-  hideSubmitError();
+  hideInlineMessage();
+
+  const validationErrors = validateAnswers();
+  if (validationErrors.length > 0) {
+    renderResponse({
+      success: false,
+      error: true,
+      error_code: 'VALIDATION_ERROR',
+      message: 'Incomplete Answers',
+      reason: `Please complete all answers. ${validationErrors.length} question(s) need a longer response (at least ${MIN_ANSWER_LENGTH} characters).`,
+      status: 'validation_failed'
+    });
+    return;
+  }
+
   const btn = document.getElementById('submitBtn');
   const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+
   btn.disabled = true;
   spinner.classList.remove('hidden');
+  btnText.textContent = 'Submitting...';
 
-  const answersArray = [];
-  const textareas = document.querySelectorAll('textarea[name^="answer_"]');
-  textareas.forEach((ta, i) => { answersArray.push({ question: ta.getAttribute('data-question') || questionsList[i] || `Question ${i + 1}`, answer: ta.value.trim() }); });
-
-  const payload = { application_id: appId, clarification_round: parseInt(round), answers: answersArray, received_at: new Date().toISOString() };
-
-  try {
-    const res = await fetch(SUBMIT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-Webhook-Secret': WEBHOOK_SECRET },
-      body: JSON.stringify(payload)
+  const answers = [];
+  document.querySelectorAll('textarea[data-index]').forEach((ta, i) => {
+    answers.push({
+      question: ta.getAttribute('data-question') || `Question ${i + 1}`,
+      answer: ta.value.trim()
     });
+  });
 
-    // ── معالجة أي رد (JSON أو نص) ──
-    const text = await res.text();
-    let data = {};
-    try { data = JSON.parse(text); } catch { data = { raw: text }; }
+  const payload = {
+    application_id: appId,
+    clarification_round: parseInt(round),
+    answers: answers,
+    received_at: new Date().toISOString()
+  };
 
-    console.log('📥 Server response:', res.status, data);
+  async function trySubmit(attempt = 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-    // ── التحقق من النجاح: يقبل {success: true} أو {status: "clarification_received"} ──
-    const isSuccess = res.ok && (data.success === true || data.status === 'clarification_received' || (!data.error && !data.error_code));
-    const isError = data.error === true || data.error_code || (!res.ok && data.success !== true);
+    try {
+      const res = await fetch(SUBMIT_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'X-Webhook-Secret': WEBHOOK_SECRET
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
 
-    if (isError) {
-      throw new Error(data.message || data.error_code || 'Server error: ' + res.status);
+      if (!res.ok) {
+        if (detectAIError(res)) {
+          return { ok: false, data: {
+            success: false,
+            error: true,
+            error_code: 'AI_SERVICE_ERROR',
+            message: 'AI service temporarily unavailable. Our team has been notified.',
+            status: 'ai_error'
+          }};
+        }
+
+        const errText = await res.text();
+        let errMsg = 'Server error ' + res.status;
+        try {
+          const errJson = JSON.parse(errText);
+          errMsg = errJson.message || errJson.error_code || errMsg;
+          return { ok: false, data: errJson };
+        } catch(_) {
+          return { ok: false, data: { success: false, error: true, message: errMsg, error_code: `HTTP_${res.status}` } };
+        }
+      }
+
+      const data = await res.json();
+      return { ok: true, data: data };
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+
+      if (attempt < MAX_RETRIES && (err.name === 'AbortError' || err.name === 'TypeError')) {
+        btnText.textContent = `Retrying (${attempt}/${MAX_RETRIES})...`;
+        await new Promise(r => setTimeout(r, 2500));
+        return trySubmit(attempt + 1);
+      }
+
+      return { 
+        ok: false, 
+        data: { 
+          success: false, 
+          error: true, 
+          error_code: err.name || 'NETWORK_ERROR',
+          message: err.name === 'AbortError' 
+            ? 'Request timed out. The server is taking too long. Please try again later.' 
+            : (err.message || 'Network connection failed.'),
+          status: 'network_error'
+        } 
+      };
     }
-    if (!isSuccess) {
-      throw new Error('Unexpected response: ' + JSON.stringify(data).substring(0, 100));
-    }
-
-    //  نجاح
-    localStorage.removeItem(STORAGE_KEY);
-    document.getElementById('clarificationForm').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-
-  } catch (err) {
-    console.error(' Submit error:', err);
-    btn.disabled = false;
-    spinner.classList.add('hidden');
-    const errorBox = document.getElementById('submitError');
-    const errorMsg = document.getElementById('submitErrorMsg');
-    errorBox.classList.remove('hidden');
-    errorMsg.textContent = (err.message || 'Submission failed') + '. Your answers are saved in this browser — you can try again.';
   }
+
+  const result = await trySubmit(1);
+  const data = result.data;
+
+  // ═══════════════════════════════════════════════════════
+  // التغيير الجوهري: نعرض الاستجابة الديناميكية دائماً
+  // ═══════════════════════════════════════════════════════
+  renderResponse(data);
+
+  btn.disabled = false;
+  spinner.classList.add('hidden');
+  btnText.textContent = 'Submit Answers';
 });
 
-function escapeHtml(text) { if (!text) return ''; const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
+function escHtml(t) {
+  if (!t) return '';
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
 
 loadQuestions();
 </script>
-
 </body>
 </html>
