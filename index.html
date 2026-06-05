@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grant Portal - New Application</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #059669 0%, #0d9488 100%); }
+    .glass-effect { backdrop-filter: blur(10px); background: rgba(255,255,255,0.95); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
+
+<div class="w-full max-w-4xl glass-effect rounded-2xl shadow-2xl overflow-hidden border border-white/50">
+
+  <!-- Header -->
+  <div class="gradient-bg px-8 py-8 text-center">
+    <h1 class="text-3xl font-bold text-white mb-2">Smart Grant Portal</h1>
+    <p class="text-emerald-100 text-sm">Submit a grant application for community-impact projects</p>
+  </div>
+
+  <!-- Form -->
+  <form id="grantForm" class="p-8 space-y-6">
+    
+    <!-- Personal Info -->
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Full Name *</label>
+        <input type="text" name="name" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="John Doe">
+      </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Email Address *</label>
+        <input type="email" name="email" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="example@email.com">
+      </div>
+    </div>
+
+    <!-- Organization -->
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Organization *</label>
+        <input type="text" name="organization" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="Your organization">
+      </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Contact Phone</label>
+        <input type="tel" name="contact_phone" 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="+1 234 567 890">
+      </div>
+    </div>
+
+    <!-- Project Info -->
+    <div class="space-y-1">
+      <label class="block text-sm font-semibold text-slate-700">Project Title *</label>
+      <input type="text" name="project_title" required 
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+        placeholder="e.g. Solar Wells for Rural Kenya">
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Sector *</label>
+        <select name="sector" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80">
+          <option value="">Select a sector</option>
+          <option value="Environment">Environment</option>
+          <option value="Education">Education</option>
+          <option value="Health">Health</option>
+          <option value="Poverty Alleviation">Poverty Alleviation</option>
+          <option value="Technology">Technology</option>
+          <option value="Arts & Culture">Arts & Culture</option>
+          <option value="General">General</option>
+        </select>
+      </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Budget Requested (USD) *</label>
+        <input type="number" name="budget" required min="1" 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="50000">
+      </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Timeline *</label>
+        <input type="text" name="timeline" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="e.g. 12 months">
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-5">
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Location *</label>
+        <input type="text" name="location" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="e.g. Tana River County, Kenya">
+      </div>
+      <div class="space-y-1">
+        <label class="block text-sm font-semibold text-slate-700">Beneficiaries *</label>
+        <input type="text" name="beneficiaries" required 
+          class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+          placeholder="e.g. 5,000 rural residents">
+      </div>
+    </div>
+
+    <div class="space-y-1">
+      <label class="block text-sm font-semibold text-slate-700">Previous Funding</label>
+      <input type="text" name="previous_funding" 
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+        placeholder="None or previous grants">
+    </div>
+
+    <div class="space-y-1">
+      <label class="block text-sm font-semibold text-slate-700">Project Description *</label>
+      <textarea name="description" required rows="6" minlength="20" 
+        class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80 resize-none"
+        placeholder="Describe your project in detail (minimum 20 characters)..."></textarea>
+      <p class="text-xs text-slate-400">Description must be at least 20 characters.</p>
+    </div>
+
+    <!-- Response Area -->
+    <div id="responseArea" class="hidden rounded-xl p-5 border"></div>
+
+    <!-- Submit Button -->
+    <button type="submit" id="submitBtn" 
+      class="w-full gradient-bg text-white font-bold py-4 rounded-xl hover:opacity-90 transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+      <span id="btnText">Submit Application</span>
+      <svg id="spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+    </button>
+  </form>
+
+  <!-- Success Result -->
+  <div id="successResult" class="hidden px-8 pb-8">
+    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-8 text-center">
+      <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+        </svg>
+      </div>
+      <h3 class="text-2xl font-bold text-emerald-800 mb-2">Application Submitted Successfully!</h3>
+      <p id="successMessage" class="text-emerald-700 mb-6"></p>
+      
+      <div class="bg-white border border-emerald-200 rounded-xl p-6 text-left space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-100 py-2">
+          <span class="text-slate-500">Application ID</span>
+          <span id="successAppId" class="font-bold text-slate-800 font-mono text-lg">N/A</span>
+        </div>
+        <div class="flex justify-between items-center border-b border-slate-100 py-2">
+          <span class="text-slate-500">Status</span>
+          <span id="successStatus" class="font-bold text-emerald-600">N/A</span>
+        </div>
+        <div id="successExtraFields" class="space-y-2"></div>
+      </div>
+      
+      <button onclick="resetForm()" class="mt-6 px-6 py-3 bg-emerald-100 text-emerald-700 rounded-xl hover:bg-emerald-200 transition font-semibold">
+        Submit Another Application
+      </button>
+    </div>
+  </div>
+
+</div>
+
+
+
+<script>
+
+const WEBHOOK_URL = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/app-x7k9m2p-2026-secure';
+const WEBHOOK_SECRET = 'grant-prod-2026-secure-key';
+const REQUEST_TIMEOUT = 120000;
+const MAX_RETRIES = 2;
+
+// ═══════════════════════════════════════════════════════
+// ERROR REPORTING - أضف هذا بعد الثوابت مباشرة
+// ═══════════════════════════════════════════════════════
+const ERROR_WEBHOOK = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/error-report-x7k9m2p-2026';
+
+async function reportError(errorType, errorMessage, details = {}) {
+  try {
+    await fetch(ERROR_WEBHOOK, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
+      },
+      body: JSON.stringify({
+        workflow_name: 'Grant Application Portal',
+        node_name: 'Frontend_' + errorType,
+        node_type: 'browser',
+        error_message: errorMessage,
+        error_description: details.description || '',
+        user_email: details.email || document.querySelector('[name="email"]')?.value || 'Unknown',
+        user_ip: 'client-side',
+        application_id: details.applicationId || 'N/A',
+        request_url: window.location.href,
+        request_method: 'CLIENT_ERROR',
+        request_payload: details,
+        environment: 'production'
+      })
+    });
+  } catch (e) {
+    console.error('Failed to report error:', e);
+  }
+}
+
+// كشف نفاذ رصيد AI
+function detectAIError(response) {
+  if (response.status === 429 || response.status === 403) {
+    reportError('AI_SERVICE', 'AI API quota exceeded or rate limited', {
+      description: 'Gemini API returned ' + response.status,
+      status: response.status
+    });
+    return true;
+  }
+  if (response.status >= 500 && response.status < 600) {
+    reportError('AI_SERVICE', 'AI service unavailable', {
+      description: 'Gemini server error: ' + response.status
+    });
+    return true;
+  }
+  return false;
+}
+
+// كشف أخطاء النظام
+window.addEventListener('error', function(event) {
+  reportError('UNKNOWN', event.message, {
+    description: event.filename + ':' + event.lineno,
+    stack: event.error?.stack
+  });
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+  reportError('UNKNOWN', 'Unhandled Promise Rejection', {
+    description: event.reason?.message || String(event.reason),
+    stack: event.reason?.stack
+  });
+});
+
+function resetForm() {
+  document.getElementById('grantForm').reset();
+  document.getElementById('grantForm').classList.remove('hidden');
+  document.getElementById('successResult').classList.add('hidden');
+  hideResponse();
+  document.getElementById('submitBtn').disabled = false;
+  document.getElementById('spinner').classList.add('hidden');
+  document.getElementById('btnText').textContent = 'Submit Application';
+}
+
+function validateForm(data) {
+  const errors = [];
+  if (!data.name || data.name.trim().length < 2) errors.push('Full name is required (min 2 characters)');
+  if (!data.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) errors.push('Valid email address is required');
+  if (!data.project_title || data.project_title.trim().length < 3) errors.push('Project title is required');
+  if (!data.budget || parseFloat(data.budget) <= 0) errors.push('Budget must be greater than 0');
+  if (!data.description || data.description.trim().length < 20) errors.push('Description must be at least 20 characters');
+  return errors;
+}
+
+function showResponse(data) {
+  const area = document.getElementById('responseArea');
+  area.classList.remove('hidden');
+
+  const isSuccess = data.success === true;
+  const isRejection = data.success === false && (data.status === 'rejected' || data.rejection_code);
+  const isCooldown = data.error_code === 'COOLDOWN_PERIOD_ACTIVE' || data.error_code === 'REJECTION_LIMIT_REACHED';
+  const isError = data.error === true || (data.success === false && !isRejection && !isCooldown);
+
+  let cardClass, iconSvg, titleColor, bodyColor, title, body;
+
+  if (isCooldown) {
+    cardClass = 'bg-amber-50 border-amber-300';
+    iconSvg = '<svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    titleColor = 'text-amber-800';
+    bodyColor = 'text-amber-700';
+    title = 'Cooldown Period Active';
+    body = data.message || 'You cannot apply right now.';
+  } else if (isRejection) {
+    cardClass = 'bg-red-50 border-red-300';
+    iconSvg = '<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+    titleColor = 'text-red-800';
+    bodyColor = 'text-red-700';
+    title = 'Application Rejected';
+    body = data.message || 'Your application was not accepted.';
+  } else if (isError) {
+    cardClass = 'bg-red-50 border-red-300';
+    iconSvg = '<svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    titleColor = 'text-red-800';
+    bodyColor = 'text-red-600';
+    title = 'System Error';
+    body = 'A technical error occurred. Our support team has been notified. Please try again later.';
+  } else {
+    cardClass = 'bg-blue-50 border-blue-300';
+    iconSvg = '<svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+    titleColor = 'text-blue-800';
+    bodyColor = 'text-blue-700';
+    title = data.message || 'Processing...';
+    body = data.reason || data.next_steps || '';
+  }
+
+  let detailsHtml = '';
+  const priorityKeys = ['application_id', 'status', 'error_code', 'rejection_code', 'stage', 
+    'total_rejections', 'effective_rejections', 'days_remaining', 
+    'next_eligible_date', 'eligible_after', 'next_reapply_date',
+    'previous_application_id', 'previous_approved_application',
+    'rejected_at', 'scored_at', 'tier', 'total_score'];
+  const allKeys = [...new Set([...priorityKeys, ...Object.keys(data)])];
+  const skipKeys = ['success', 'error', 'message', 'reason', 'next_steps'];
+
+  for (const key of allKeys) {
+    if (data[key] === undefined || data[key] === null) continue;
+    if (skipKeys.includes(key)) continue;
+
+    let value = data[key];
+    let label = translateKey(key);
+
+    if (key.includes('date') || key.includes('_at')) {
+      try { value = new Date(value).toLocaleString('en-US'); } catch(e) {}
+    }
+    if (key.includes('amount') || key.includes('budget') || key.includes('funding')) {
+      const num = parseFloat(value);
+      if (!isNaN(num) && num > 0) value = '$' + num.toLocaleString();
+    }
+    if (typeof value === 'object') {
+      value = JSON.stringify(value).substring(0, 200);
+    }
+
+    const isImportant = ['error_code', 'rejection_code', 'total_rejections', 'days_remaining'].includes(key);
+    const valueClass = isImportant ? 'font-bold text-red-700' : 'text-slate-700';
+
+    detailsHtml += `
+      <div class="flex justify-between border-b border-slate-100 py-2 last:border-0">
+        <span class="text-slate-500 text-sm">${escHtml(label)}</span>
+        <span class="${valueClass} text-sm font-mono text-right">${escHtml(String(value))}</span>
+      </div>`;
+  }
+
+  area.className = `rounded-xl p-5 border-2 ${cardClass}`;
+  area.innerHTML = `
+    <div class="flex items-start gap-3">
+      <div class="flex-shrink-0 w-10 h-10 rounded-full bg-white/80 flex items-center justify-center shadow">
+        ${iconSvg}
+      </div>
+      <div class="flex-1 min-w-0">
+        <h4 class="font-bold text-base ${titleColor}">${escHtml(title)}</h4>
+        <p class="text-sm mt-1 ${bodyColor}">${escHtml(body)}</p>
+        ${detailsHtml ? `<div class="mt-3 bg-white/70 rounded-lg p-3 border border-slate-200/60">${detailsHtml}</div>` : ''}
+        ${data.next_steps ? `<div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3"><p class="text-amber-800 text-sm font-bold">Next steps:</p><p class="text-amber-700 text-sm mt-1">${escHtml(data.next_steps)}</p></div>` : ''}
+      </div>
+    </div>
+  `;
+  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function translateKey(key) {
+  const translations = {
+    application_id: 'Application ID',
+    status: 'Status',
+    error_code: 'Error Code',
+    rejection_code: 'Rejection Code',
+    stage: 'Stage',
+    total_rejections: 'Total Rejections',
+    effective_rejections: 'Effective Rejections',
+    days_remaining: 'Days Remaining',
+    next_eligible_date: 'Next Eligible Date',
+    eligible_after: 'Eligible After',
+    next_reapply_date: 'Next Reapply Date',
+    previous_application_id: 'Previous Application ID',
+    previous_approved_application: 'Previous Approved Application',
+    rejected_at: 'Rejected At',
+    scored_at: 'Scored At',
+    tier: 'Tier',
+    total_score: 'Total Score'
+  };
+  return translations[key] || key.replace(/_/g, ' ');
+}
+
+function hideResponse() {
+  document.getElementById('responseArea').classList.add('hidden');
+  document.getElementById('responseArea').innerHTML = '';
+}
+
+function renderSuccess(data) {
+  document.getElementById('grantForm').classList.add('hidden');
+  document.getElementById('successResult').classList.remove('hidden');
+
+  const status = (data.status || '').toLowerCase();
+  document.getElementById('successAppId').textContent = data.application_id || 'N/A';
+  
+  let statusText = data.status || 'N/A';
+  let statusClass = 'text-emerald-600';
+  
+  if (status === 'awaiting_clarification') {
+    statusText = 'Awaiting Clarification';
+    document.getElementById('successMessage').textContent = 'We received your application. Please check your email for clarification questions.';
+  } else if (status === 'review') {
+    statusText = 'In Review';
+    document.getElementById('successMessage').textContent = 'Your application was sent to the review committee.';
+  } else if (status === 'priority') {
+    statusText = 'High Priority';
+    document.getElementById('successMessage').textContent = 'Your application was flagged as high priority.';
+  } else {
+    document.getElementById('successMessage').textContent = 'Your application has been received.';
+  }
+  
+  document.getElementById('successStatus').textContent = statusText;
+  document.getElementById('successStatus').className = `font-bold ${statusClass}`;
+
+  const extraContainer = document.getElementById('successExtraFields');
+  extraContainer.innerHTML = '';
+  const skipKeys = ['success', 'error', 'error_code', 'application_id', 'status', 'message'];
+  
+  Object.entries(data)
+    .filter(([k]) => !skipKeys.includes(k))
+    .forEach(([key, value]) => {
+      const row = document.createElement('div');
+      row.className = 'flex justify-between items-start border-b border-slate-100 py-2 last:border-0';
+      const label = translateKey(key);
+      const display = (value !== null && value !== undefined) ? String(value) : 'N/A';
+      row.innerHTML = `<span class="text-slate-500 mr-4">${escHtml(label)}</span><span class="font-bold text-slate-800 text-right break-all">${escHtml(display)}</span>`;
+      extraContainer.appendChild(row);
+    });
+}
+
+document.getElementById('grantForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const btnText = document.getElementById('btnText');
+
+  btn.disabled = true;
+  spinner.classList.remove('hidden');
+  btnText.textContent = 'Submitting...';
+  hideResponse();
+
+  const formData = new FormData(e.target);
+  const payload = {};
+  formData.forEach((v, k) => payload[k] = v);
+  payload.budget = parseFloat(payload.budget) || 0;
+
+  const validationErrors = validateForm(payload);
+  if (validationErrors.length > 0) {
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = 'Submit Application';
+    showResponse({
+      success: false,
+      error: true,
+      error_code: 'VALIDATION_ERROR',
+      message: 'Please fix the following:',
+      reason: '- ' + validationErrors.join('\n- '),
+      status: 'validation_failed'
+    });
+    return;
+  }
+
+  async function trySubmit(attempt = 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
+
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'X-Webhook-Secret': WEBHOOK_SECRET 
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+
+      if (!res.ok) {
+        // كشف إذا كان الخطأ من AI
+        if (detectAIError(res)) {
+          showResponse({
+            success: false,
+            error: true,
+            error_code: 'AI_SERVICE_ERROR',
+            message: 'AI service temporarily unavailable. Our team has been notified.',
+            status: 'ai_error'
+          });
+          return { ok: false, data: {} };
+        }
+
+        const text = await res.text();
+        let errorData;
+        try {
+          errorData = JSON.parse(text);
+        } catch(e) {
+          errorData = { 
+            success: false, 
+            error: true, 
+            error_code: `HTTP_${res.status}`,
+            message: `Server error: ${res.status}`,
+            raw_response: text.substring(0, 200)
+          };
+        }
+        return { ok: false, data: errorData };
+      }
+
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        return { 
+          ok: false, 
+          data: { 
+            success: false, 
+            error: true, 
+            error_code: 'INVALID_RESPONSE',
+            message: 'Invalid response from server',
+            raw_response: text.substring(0, 200)
+          } 
+        };
+      }
+
+      const data = await res.json();
+      return { ok: true, data: data };
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+
+      if (attempt < MAX_RETRIES && (err.name === 'AbortError' || err.name === 'TypeError')) {
+        btnText.textContent = `Retrying (${attempt}/${MAX_RETRIES})...`;
+        await new Promise(r => setTimeout(r, 2500));
+        return trySubmit(attempt + 1);
+      }
+
+      return { 
+        ok: false, 
+        data: { 
+          success: false, 
+          error: true, 
+          error_code: err.name || 'NETWORK_ERROR',
+          message: err.name === 'AbortError' 
+            ? 'Request timed out. The server is taking too long. Please try again later.' 
+            : (err.message || 'Network connection failed.'),
+          status: 'network_error'
+        } 
+      };
+    }
+  }
+
+  const result = await trySubmit(1);
+  const data = result.data;
+
+  if (data.success === true) {
+    renderSuccess(data);
+    return;
+  }
+
+  showResponse(data);
+
+  btn.disabled = false;
+  spinner.classList.add('hidden');
+  btnText.textContent = 'Submit Application';
+});
+
+function escHtml(t) {
+  if (!t) return '';
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
