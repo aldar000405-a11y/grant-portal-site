@@ -3,150 +3,258 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Committee Decision</title>
+  <title>Grant Portal - Committee Decision</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>body{font-family:'Inter',sans-serif;}</style>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .approved-bg { background: linear-gradient(135deg, #059669 0%, #0d9488 100%); }
+    .rejected-bg { background: linear-gradient(135deg, #dc2626 0%, #e11d48 100%); }
+    .info-bg { background: linear-gradient(135deg, #d97706 0%, #ea580c 100%); }
+  </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen flex items-center justify-center p-4">
-<div class="w-full max-w-lg bg-white rounded-2xl shadow-xl overflow-hidden">
-  <div id="header" class="px-8 py-6">
-    <h1 class="text-2xl font-bold text-white">Committee Decision</h1>
-    <p class="text-white/80 text-sm mt-1">Application <span id="appId" class="font-mono"></span></p>
+
+<div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+  <!-- Header -->
+  <div id="header" class="px-8 py-8 text-center">
+    <h1 class="text-xl font-bold text-white">Committee Decision</h1>
+    <p class="text-white/80 text-sm mt-2">Application ID <span id="appId" class="font-mono bg-white/20 px-2 py-1 rounded"></span></p>
   </div>
+
   <div class="p-8">
-    <div id="confirmBox" class="text-center">
-      <div id="iconBox" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"></div>
-      <h2 id="title" class="text-xl font-semibold text-slate-800"></h2>
-      <p id="desc" class="text-slate-500 mt-2"></p>
-      
-      <div id="appInfo" class="mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200 hidden text-left">
-        <p class="text-xs text-slate-500 uppercase tracking-wider mb-1">AI Funding Recommendation</p>
-        <p class="text-2xl font-bold text-emerald-600" id="suggestedDisplay">$0</p>
-        <p class="text-xs text-slate-400 mt-1">Based on project scope analysis. You can adjust this amount.</p>
+
+    <!-- Form Box -->
+    <div id="formBox">
+
+      <!-- Decision Info -->
+      <div class="text-center mb-8">
+        <div id="iconBox" class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg"></div>
+        <h2 id="title" class="text-2xl font-bold text-slate-800"></h2>
+        <p id="desc" class="text-slate-500 mt-3 text-sm leading-relaxed"></p>
       </div>
 
-      <div class="mt-6 text-left">
-        <label class="block text-sm font-medium text-slate-700 mb-1">Committee Member Name</label>
-        <input type="text" id="decidedBy" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none mb-3" placeholder="Your name">
-        
-        <div id="amountField" class="hidden mb-3">
-          <label class="block text-sm font-medium text-slate-700 mb-1">
+      <!-- AI Suggested Amount -->
+      <div id="appInfo" class="mb-6 p-5 bg-emerald-50 rounded-xl border-2 border-emerald-200 hidden text-left">
+        <p class="text-xs text-emerald-600 uppercase tracking-wider mb-2 font-bold">AI Funding Recommendation</p>
+        <p class="text-3xl font-bold text-emerald-600" id="suggestedDisplay">$0</p>
+        <p class="text-xs text-emerald-500 mt-2">Based on project scope analysis. You can adjust the amount.</p>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="text-left space-y-4">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Committee Member Name *</label>
+          <input type="text" id="decidedBy" 
+            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white/80"
+            placeholder="Full name">
+        </div>
+
+        <div id="amountField" class="hidden">
+          <label class="block text-sm font-bold text-slate-700 mb-2">
             Approved Funding Amount ($) <span class="text-red-500">*</span>
           </label>
-          <input type="number" id="approvedAmount" min="1" step="0.01" 
-                 class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none" 
-                 placeholder="e.g. 50000">
+          <input type="number" id="approvedAmount" min="1" step="1" 
+            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition bg-white/80"
+            placeholder="e.g. 50000">
           <p id="amountError" class="text-red-500 text-xs mt-1 hidden">Please enter a valid amount greater than 0</p>
         </div>
 
-        <label class="block text-sm font-medium text-slate-700 mb-1">Notes (optional)</label>
-        <textarea id="notes" rows="3" class="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none resize-none" placeholder="Any additional notes..."></textarea>
+        <div>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Notes (optional)</label>
+          <textarea id="notes" rows="3" 
+            class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition bg-white/80 resize-none"
+            placeholder="Any additional notes..."></textarea>
+        </div>
       </div>
-      <div class="flex gap-3 mt-6">
-        <button onclick="submitDecision()" id="confirmBtn" class="flex-1 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2">
-          <span>Confirm Decision</span>
-          <svg id="spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-          </svg>
-        </button>
-      </div>
+
+      <!-- Submit Button -->
+      <button onclick="submitDecision()" id="confirmBtn" 
+        class="w-full mt-8 text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg">
+        <span id="btnText">Confirm Decision</span>
+        <svg id="spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+      </button>
     </div>
-    
+
+    <!-- Response Area — يعرض الاستجابة الديناميكية دائماً -->
+    <div id="responseArea" class="hidden" aria-live="polite" role="status"></div>
+
+    <!-- Processing -->
     <div id="processing" class="hidden text-center py-8">
       <div class="w-12 h-12 border-4 border-slate-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
-      <p class="text-slate-600 font-medium">Processing your decision...</p>
+      <p class="text-slate-600 font-bold">Processing decision...</p>
       <p class="text-slate-400 text-sm mt-1">Please do not close this window</p>
     </div>
-    <div id="result" class="hidden text-center">
-      <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-        <svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-        </svg>
-      </div>
-      <h3 class="text-xl font-semibold text-slate-800">Decision Recorded</h3>
-      <p class="text-slate-500 mt-2">The applicant and finance team have been notified automatically.</p>
-      <button onclick="window.close()" class="mt-6 px-6 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition">Close Window</button>
-    </div>
-    <div id="error" class="hidden text-center mt-4">
-      <div class="bg-red-50 border border-red-200 rounded-xl p-6">
-        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-red-800 mb-1">Submission Failed</h3>
-        <p id="errorMsg" class="text-red-600"></p>
-        <div class="flex gap-2 justify-center mt-4">
-          <button onclick="location.reload()" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition text-sm">Try Again</button>
-          <button onclick="showDetails()" class="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition text-sm">Details</button>
-        </div>
-        <pre id="errorDetails" class="hidden mt-3 text-left bg-white border border-red-100 rounded-lg p-3 text-xs text-red-700 font-mono overflow-auto max-h-40"></pre>
-      </div>
-    </div>
+
   </div>
 </div>
+
 <script>
-//  ����: ������� var ����� �� const� ������� �� ���� ��� script
-const WEBHOOK_URL = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/decision';
-const WEBHOOK_SECRET = 'grant-secure-2026-kimi-key';
+const WEBHOOK_URL = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/decide-x7k9m2p-2026';
+const WEBHOOK_SECRET = 'grant-prod-2026-secure-key';
+const REQUEST_TIMEOUT = 45000;
+const MAX_RETRIES = 2;
+
+// HMAC ADDED
+async function generateHMACSignature(bodyString) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(WEBHOOK_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signature = await crypto.subtle.sign('HMAC', key, encoder.encode(bodyString));
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function getResponseData(data) {
+  if (!data || typeof data !== 'object') return {};
+  const merged = { ...data };
+  const nested = [data.data, data.result, data.json, data.payload].filter(v => v && typeof v === 'object' && !Array.isArray(v));
+  nested.forEach(source => {
+    Object.keys(source).forEach(key => {
+      if (merged[key] === undefined) merged[key] = source[key];
+    });
+  });
+  return merged;
+}
+
+function getPrimaryMessage(data, fallback) {
+  const source = getResponseData(data);
+  const message = source.message || source.reason || source.next_steps || source.status || source.error_code;
+  return message || fallback;
+}
+
+function getDetailSource(data) {
+  const base = getResponseData(data);
+  if (base.ui && typeof base.ui === 'object') delete base.ui;
+  return base;
+}
+
+// ═══════════════════════════════════════════════════════
+// ERROR REPORTING
+// ═══════════════════════════════════════════════════════
+const ERROR_WEBHOOK = 'https://grant-n8n-proxy.mohummadsultan0.workers.dev/error-report-x7k9m2p-2026';
+
+async function reportError(errorType, errorMessage, details = {}) {
+  try {
+    const payload = {
+      error_message: errorMessage,
+      error_description: details.description || '',
+      node_name: 'Frontend_' + (errorType || 'UNKNOWN'),
+      workflow_name: 'Grant Application Portal',
+      node_type: 'browser',
+      user_email: details.email || document.querySelector('[name="email"]')?.value || 'Unknown',
+      application_id: details.applicationId || 'N/A',
+      request_url: window.location.href,
+      request_method: 'CLIENT_ERROR',
+      request_payload: details,
+      environment: 'production'
+    };
+
+    const res = await fetch(ERROR_WEBHOOK, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Webhook-Secret': WEBHOOK_SECRET
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) {
+      console.error('Error webhook failed:', res.status);
+    }
+  } catch (e) {
+    console.error('Failed to report error:', e);
+  }
+}
+
+function detectAIError(response) {
+  if (response.status === 429 || response.status === 403) {
+    reportError('AI_SERVICE', 'AI API quota exceeded or rate limited', {
+      description: 'Gemini API returned ' + response.status,
+      status: response.status
+    });
+    return true;
+  }
+  if (response.status >= 500 && response.status < 600) {
+    reportError('AI_SERVICE', 'AI service unavailable', {
+      description: 'Gemini server error: ' + response.status
+    });
+    return true;
+  }
+  return false;
+}
+
+window.addEventListener('error', function(event) {
+  reportError('UNKNOWN', event.message, {
+    description: event.filename + ':' + event.lineno,
+    stack: event.error?.stack
+  });
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+  reportError('UNKNOWN', 'Unhandled Promise Rejection', {
+    description: event.reason?.message || String(event.reason),
+    stack: event.reason?.stack
+  });
+});
 
 const params = new URLSearchParams(location.search);
 const appId = params.get('id') || params.get('application_id') || 'UNKNOWN';
 
-// ?? �����: ����� decision ���� ���� ??
 let rawDecision = params.get('decision') || 'approved';
 let decision = rawDecision.toString().replace(/\.{3,}$/, '').trim().toLowerCase();
 
-// ?? fallback ��� ��� ������� �� ���� ??
-if (decision.startsWith('approved')) decision = 'approved';
-if (decision.startsWith('reject')) decision = 'rejected';
-if (decision.startsWith('more')) decision = 'more_info';
+if (decision.startsWith('approved')) {
+  decision = 'approved';
+} else if (decision.startsWith('reject')) {
+  decision = 'rejected';
+} else {
+  decision = 'approved';
+}
 
-const suggestedAmount = parseFloat(params.get('suggested')) || parseFloat(params.get('approved_amount')) || 0;
-
+const suggestedAmount = Math.floor(parseFloat(params.get('suggested')) || 0);
 document.getElementById('appId').textContent = appId;
 
 const config = {
   approved: {
     title: 'Approve Application',
     desc: suggestedAmount > 0 
-      ? `AI recommends $${Number(suggestedAmount).toLocaleString()}. Review and confirm or adjust the funding amount.`
+      ? `AI recommends $${Number(suggestedAmount).toLocaleString()}. Review and confirm or adjust the amount.`
       : 'Enter the approved funding amount below.',
-    header: 'bg-gradient-to-r from-emerald-600 to-teal-600',
+    header: 'approved-bg',
     btn: 'bg-emerald-600 hover:bg-emerald-700',
-    icon: '<svg class="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
+    icon: '<svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>',
     iconBg: 'bg-emerald-100',
     showAmount: true
   },
   rejected: {
     title: 'Reject Application',
-    desc: 'You are about to reject this grant application. A guidance email will be sent to the applicant.',
-    header: 'bg-gradient-to-r from-red-600 to-rose-600',
+    desc: 'You are about to reject this application. A guidance email will be sent to the applicant.',
+    header: 'rejected-bg',
     btn: 'bg-red-600 hover:bg-red-700',
-    icon: '<svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
+    icon: '<svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>',
     iconBg: 'bg-red-100',
-    showAmount: false
-  },
-  more_info: {
-    title: 'Request More Information',
-    desc: 'You are about to request additional information from the applicant. A clarification email will be sent.',
-    header: 'bg-gradient-to-r from-amber-500 to-orange-500',
-    btn: 'bg-amber-500 hover:bg-amber-600',
-    icon: '<svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>',
-    iconBg: 'bg-amber-100',
     showAmount: false
   }
 };
 
 const c = config[decision] || config.approved;
-document.getElementById('header').className = c.header + ' px-8 py-6';
+document.getElementById('header').className = c.header + ' px-8 py-8 text-center';
 document.getElementById('title').textContent = c.title;
 document.getElementById('desc').textContent = c.desc;
-document.getElementById('iconBox').className = 'w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ' + c.iconBg;
+document.getElementById('iconBox').className = 'w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg ' + c.iconBg;
 document.getElementById('iconBox').innerHTML = c.icon;
-document.getElementById('confirmBtn').className = 'flex-1 text-white font-semibold py-3 rounded-lg transition flex items-center justify-center gap-2 ' + c.btn;
+document.getElementById('confirmBtn').className = 'w-full mt-8 text-white font-bold py-4 rounded-xl transition flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg ' + c.btn;
 
 if (c.showAmount) {
   document.getElementById('amountField').classList.remove('hidden');
@@ -154,44 +262,293 @@ if (c.showAmount) {
     document.getElementById('approvedAmount').value = suggestedAmount;
     document.getElementById('appInfo').classList.remove('hidden');
     document.getElementById('suggestedDisplay').textContent = '$' + Number(suggestedAmount).toLocaleString();
-    // ? �����: ��� ������ ��� ����� �� HTML ������� ���� �� ���� �����
-    // document.getElementById('aiSuggestLabel').textContent = '$' + Number(suggestedAmount).toLocaleString();
   }
 }
 
-function showDetails() {
-  const el = document.getElementById('errorDetails');
-  el.classList.toggle('hidden');
+const amountInput = document.getElementById('approvedAmount');
+if (amountInput) {
+  amountInput.addEventListener('input', function(e) {
+    if (e.target.value.includes('.') || e.target.value.includes(',')) {
+      e.target.value = Math.floor(parseFloat(e.target.value) || 0);
+    }
+  });
+}
+
+document.getElementById('decidedBy').addEventListener('blur', function() {
+  if (this.value.trim().length < 2) {
+    this.classList.add('border-red-500');
+  } else {
+    this.classList.remove('border-red-500');
+  }
+});
+
+// ═══════════════════════════════════════════════════════
+
+function renderUiBlock(ui) {
+  const variants = {
+    success:  { card: 'bg-emerald-50 border-emerald-200', icon: '<svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>', titleColor: 'text-emerald-800', bodyColor: 'text-emerald-700' },
+    error:    { card: 'bg-red-50 border-red-200',     icon: '<svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>', titleColor: 'text-red-800', bodyColor: 'text-red-700' },
+    warning:  { card: 'bg-amber-50 border-amber-200', icon: '<svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>', titleColor: 'text-amber-800', bodyColor: 'text-amber-700' },
+    info:     { card: 'bg-blue-50 border-blue-200',   icon: '<svg class="w-10 h-10 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>', titleColor: 'text-blue-800', bodyColor: 'text-blue-700' },
+    blocked:  { card: 'bg-red-900 border-red-700',    icon: '<svg class="w-10 h-10 text-red-100" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636L5.636 18.364M6.343 6.343a8 8 0 1111.314 11.314A8 8 0 016.343 6.343z"></path></svg>', titleColor: 'text-red-100', bodyColor: 'text-red-200' }
+  };
+
+  const v = variants[ui.variant] || variants.info;
+
+  let detailsHtml = '';
+  if (ui.details && typeof ui.details === 'object') {
+    const entries = Array.isArray(ui.details) 
+      ? ui.details
+      : Object.entries(ui.details).map(([k, v]) => ({ label: k.replace(/_/g, ' '), value: v }));
+    
+    detailsHtml = entries.map(({ label, value }) => `
+      <div class="flex justify-between border-b border-slate-100 py-2 last:border-0">
+        <span class="text-slate-500 text-sm">${escHtml(String(label))}</span>
+        <span class="text-slate-700 text-sm font-mono text-right">${escHtml(String(value ?? ''))}</span>
+      </div>`).join('');
+  }
+
+  let actionsHtml = '';
+  if (Array.isArray(ui.actions)) {
+    actionsHtml = ui.actions.map(action => {
+      const styleMap = {
+        primary:   'bg-blue-600 hover:bg-blue-700 text-white',
+        success:   'bg-emerald-600 hover:bg-emerald-700 text-white',
+        danger:    'bg-red-600 hover:bg-red-700 text-white',
+        warning:   'bg-amber-500 hover:bg-amber-600 text-white',
+        secondary: 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+      };
+      const cls = styleMap[action.style] || styleMap.primary;
+      const onclick = action.url 
+        ? `window.location.href='${escHtml(action.url)}'`
+        : action.reload 
+          ? 'window.location.reload()'
+          : action.close
+            ? 'window.close()'
+            : '';
+      return `<button onclick="${onclick}" class="px-5 py-2 rounded-xl font-bold text-sm transition shadow ${cls}">${escHtml(action.label)}</button>`;
+    }).join('');
+  }
+
+  return `
+    <div class="${v.card} border-2 rounded-xl p-6">
+      <div class="flex items-start gap-3">
+        <div class="flex-shrink-0 w-12 h-12 rounded-full bg-white/80 flex items-center justify-center shadow">
+          ${v.icon}
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="font-bold text-base ${v.titleColor}">${escHtml(ui.title || '')}</h4>
+          <p class="text-sm mt-1 ${v.bodyColor}">${escHtml(ui.message || '')}</p>
+          ${detailsHtml ? `<div class="mt-3 bg-white/70 rounded-lg p-3 border border-slate-200/60">${detailsHtml}</div>` : ''}
+          ${ui.note ? `<div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3"><p class="text-amber-700 text-sm">${escHtml(ui.note)}</p></div>` : ''}
+          ${actionsHtml ? `<div class="mt-3 flex gap-2 flex-wrap">${actionsHtml}</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+/* ═══════════════════════════════════════════════════════
+   RENDER RESPONSE — يعرض الاستجابة الديناميكية دائماً
+   ═══════════════════════════════════════════════════════ */
+function renderResponse(data) {
+  const area = document.getElementById('responseArea');
+  area.classList.remove('hidden');
+
+  // ── التعامل مع string JSON غير متوقع ──
+  if (typeof data === 'string') {
+    try { data = JSON.parse(data); } catch (e) { data = { success: false, error: true, message: data }; }
+  }
+  if (!data || typeof data !== 'object') {
+    data = { success: false, error: true, message: 'Invalid response from server' };
+  }
+
+  // ─── ui block يأخذ الأولوية الكاملة ───
+  if (data.ui && typeof data.ui === 'object') {
+    area.innerHTML = renderUiBlock(data.ui);
+    area.className = 'rounded-xl animate-fade-in';
+    area.classList.remove('hidden');
+    area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    return;
+  }
+
+  const responseData = getResponseData(data);
+  const isSuccess = responseData.success === true;
+  const isRejection = responseData.success === false && responseData.status === 'rejected';
+  const isError = responseData.error === true;
+
+  if (isError) {
+    document.getElementById('formBox').classList.remove('hidden');
+    const btn = document.getElementById('confirmBtn');
+    const spinner = document.getElementById('spinner');
+    const btnText = document.getElementById('btnText');
+    btn.disabled = false;
+    spinner.classList.add('hidden');
+    btnText.textContent = 'Confirm Decision';
+  } else {
+    document.getElementById('formBox').classList.add('hidden');
+  }
+
+  // ── بناء تفاصيل إضافية من جميع الحقول المهمة ──
+  let detailsHtml = '';
+  const priorityKeys = [
+    'message', 'reason', 'rejection_code', 'application_id', 'stage',
+    'total_rejections', 'rejected_at', 'next_steps', 'error_code',
+    'decision', 'approved_amount', 'tier', 'total_score',
+    'decided_by', 'decided_at', 'applicant_notified', 'committee_notified',
+    'days_remaining', 'next_eligible_date', 'eligible_after'
+  ];
+  const detailSource = getDetailSource(responseData);
+  const allKeys = [...new Set([...priorityKeys, ...Object.keys(detailSource)])];
+
+  for (const key of allKeys) {
+    if (detailSource[key] === undefined || detailSource[key] === null) continue;
+    if (key === 'success') continue;
+
+    let value = detailSource[key];
+    let label = translateKey(key);
+    if (key === 'rejected_at' || key === 'scored_at' || key === 'decided_at' || key === 'eligible_after') {
+      try { value = new Date(value).toLocaleString('en-US'); } catch(e) {}
+    }
+    if (key === 'approved_amount' || key === 'suggested_funding_amount' || key === 'budget') {
+      value = '$' + Number(value).toLocaleString();
+    }
+    if (typeof value === 'object') {
+      value = JSON.stringify(value).substring(0, 200);
+    }
+
+    const isImportant = ['rejection_code', 'error_code', 'total_rejections', 'days_remaining'].includes(key);
+    const valueClass = isImportant ? 'font-bold text-red-700' : 'text-slate-700';
+
+    detailsHtml += `
+      <div class="flex justify-between border-b border-slate-100 py-2 last:border-0">
+        <span class="text-slate-500 text-sm">${escHtml(label)}</span>
+        <span class="${valueClass} text-sm font-mono">${escHtml(String(value))}</span>
+      </div>`;
+  }
+
+  // ── تحديد الألوان والأيقونات حسب الحالة ──
+  let cardClass, iconSvg, title, message, btnHtml;
+
+  if (isSuccess) {
+    cardClass = 'bg-emerald-50 border-emerald-200';
+    iconSvg = '<svg class="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+    title = responseData.message || 'Decision recorded successfully';
+    message = getPrimaryMessage(responseData, 'The applicant and finance team have been notified.');
+    btnHtml = `<button onclick="window.close()" class="mt-6 px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-bold shadow">Close Window</button>`;
+  } else if (isRejection) {
+    cardClass = 'bg-red-50 border-red-200';
+    iconSvg = '<svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>';
+    title = responseData.message || 'Application Rejected';
+    message = getPrimaryMessage(responseData, 'The application was rejected.');
+    btnHtml = `<button onclick="window.close()" class="mt-6 px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition font-bold shadow">Close Window</button>`;
+  } else {
+    cardClass = 'bg-amber-50 border-amber-200';
+    iconSvg = '<svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+    title = responseData.error_code || 'Error';
+    message = getPrimaryMessage(responseData, 'An error occurred while processing the decision.');
+    btnHtml = `<button onclick="window.location.reload()" class="mt-6 px-6 py-3 bg-amber-500 text-white rounded-xl hover:bg-amber-600 transition font-bold shadow">Try Again</button>`;
+  }
+
+  // ── عرض البطاقة الديناميكية ──
+  area.innerHTML = `
+    <div class="${cardClass} border-2 rounded-xl p-6 text-center">
+      <div class="w-20 h-20 rounded-full bg-white flex items-center justify-center mx-auto mb-4 shadow">
+        ${iconSvg}
+      </div>
+      <h3 class="text-2xl font-bold text-slate-800 mb-2">${escHtml(title)}</h3>
+      <p class="text-slate-600 mb-4">${escHtml(message)}</p>
+      ${detailsHtml ? `<div class="text-left bg-white/70 rounded-lg p-4 border ${isRejection ? 'border-red-100' : isSuccess ? 'border-emerald-100' : 'border-amber-100'} mb-4">${detailsHtml}</div>` : ''}
+      ${data.next_steps && !isSuccess ? `<div class="mt-3 bg-amber-50 border border-amber-200 rounded-lg p-3 text-left"><p class="text-amber-800 text-sm font-bold">Next steps:</p><p class="text-amber-700 text-sm mt-1">${escHtml(data.next_steps)}</p></div>` : ''}
+      ${btnHtml}
+    </div>
+  `;
+
+  area.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideResponse() {
+  document.getElementById('responseArea').classList.add('hidden');
+}
+
+function translateKey(key) {
+  const translations = {
+    application_id: 'Application ID',
+    status: 'Status',
+    error_code: 'Error Code',
+    rejection_code: 'Rejection Code',
+    stage: 'Stage',
+    total_rejections: 'Total Rejections',
+    effective_rejections: 'Effective Rejections',
+    days_remaining: 'Days Remaining',
+    next_eligible_date: 'Next Eligible Date',
+    eligible_after: 'Eligible After',
+    next_reapply_date: 'Next Reapply Date',
+    previous_application_id: 'Previous Application ID',
+    previous_approved_application: 'Previous Approved Application',
+    rejected_at: 'Rejected At',
+    scored_at: 'Scored At',
+    decided_at: 'Decided At',
+    tier: 'Tier',
+    total_score: 'Total Score',
+    committee_notified: 'Committee Notified',
+    applicant_notified: 'Applicant Notified',
+    workflow_version: 'Workflow Version',
+    clarification_round: 'Clarification Round'
+  };
+  return translations[key] || key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 }
 
 async function submitDecision() {
-  const decidedBy = document.getElementById('decidedBy').value.trim() || 'Committee';
+  const decidedByRaw = document.getElementById('decidedBy').value.trim();
+  if (!decidedByRaw || decidedByRaw.length < 2) {
+    document.getElementById('decidedBy').classList.add('border-red-500');
+    document.getElementById('decidedBy').focus();
+    renderResponse({
+      success: false,
+      error: true,
+      error_code: 'VALIDATION_ERROR',
+      message: 'Committee member name is required (minimum 2 characters).'
+    });
+    return;
+  }
+  document.getElementById('decidedBy').classList.remove('border-red-500');
+  const decidedBy = decidedByRaw;
   const notes = document.getElementById('notes').value.trim() || '';
   const btn = document.getElementById('confirmBtn');
   const spinner = document.getElementById('spinner');
-  
-  // ?? �����: ��� approved_amount ���� ���� ??
+  const btnText = document.getElementById('btnText');
+
   let approvedAmountValue = null;
-  
   if (decision === 'approved') {
-    const amountInput = document.getElementById('approvedAmount');
-    const amountStr = amountInput.value.trim();
+    const amountStr = document.getElementById('approvedAmount').value.trim();
     const amountError = document.getElementById('amountError');
-    
+
     if (!amountStr || parseFloat(amountStr) <= 0) {
       amountError.classList.remove('hidden');
-      amountInput.classList.add('border-red-500');
+      document.getElementById('approvedAmount').classList.add('border-red-500');
       return;
     }
-    
+
     amountError.classList.add('hidden');
-    amountInput.classList.remove('border-red-500');
-    approvedAmountValue = parseFloat(amountStr);
+    document.getElementById('approvedAmount').classList.remove('border-red-500');
+    approvedAmountValue = Math.floor(parseFloat(amountStr));
   }
-  
+
+  const actionWord = decision === 'approved' ? 'APPROVE' : 'REJECT';
+  const amountText = decision === 'approved' && approvedAmountValue 
+    ? ` with $${approvedAmountValue.toLocaleString()}` 
+    : '';
+  const confirmed = confirm(
+    `Confirm ${actionWord} for application:\n\n` +
+    `ID: ${appId}${amountText}\n` +
+    `Decided by: ${decidedBy}\n\n` +
+    `This action will notify the applicant by email and cannot be undone.\n\nContinue?`
+  );
+  if (!confirmed) return;
+
   btn.disabled = true;
   spinner.classList.remove('hidden');
-  document.getElementById('confirmBox').classList.add('hidden');
+  btnText.textContent = 'Processing...';
+  hideResponse();
   document.getElementById('processing').classList.remove('hidden');
 
   const payload = {
@@ -202,72 +559,132 @@ async function submitDecision() {
     approved_amount: approvedAmountValue
   };
 
-  // ?? ������: ���� Console (F12) ��� ����� ��� Confirm ??
-  console.log('Payload:', JSON.stringify(payload, null, 2));
-  console.log('WEBHOOK_URL:', WEBHOOK_URL); // ? ������ �� ��� �����
-
-  let errorInfo = '';
-
-  try {
+  async function trySubmit(attempt = 1) {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000);
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-    //  ������� WEBHOOK_URL �������� �� var
-  const res = await fetch(WEBHOOK_URL, {
-  method: 'POST',
-  headers: { 
-    'Content-Type': 'application/json',
-    'X-Webhook-Secret': WEBHOOK_SECRET 
-  },
-  body: JSON.stringify(payload),
-  signal: controller.signal
-});
+    try {
+      // HMAC ADDED
+      const bodyString = JSON.stringify(payload);
+      const signatureHex = await generateHMACSignature(bodyString);
 
-    clearTimeout(timeoutId);
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-Webhook-Secret': WEBHOOK_SECRET,
+          'x-webhook-signature': signatureHex
+        },
+        body: bodyString,
+        signal: controller.signal
+      });
 
-    errorInfo += `Status: ${res.status} ${res.statusText}\n`;
+      clearTimeout(timeoutId);
 
-    if (!res.ok) {
-      const text = await res.text();
-      errorInfo += `Response body: ${text.substring(0, 500)}`;
-      throw new Error(`Server error ${res.status}: ${res.statusText}`);
+      if (!res.ok) {
+        if (detectAIError(res)) {
+          return { ok: false, aiError: true, data: {
+            success: false,
+            error: true,
+            error_code: 'AI_SERVICE_ERROR',
+            message: 'AI service temporarily unavailable. Our team has been notified.',
+            status: 'ai_error'
+          }};
+        }
+
+        const text = await res.text();
+        reportError('HTTP', `Server error ${res.status}`, {
+          description: text.substring(0, 200),
+          status: res.status,
+          payload: payload
+        });
+        let msg = `Server error ${res.status}: ${res.statusText}`;
+        let parsedData = {};
+        try {
+          parsedData = JSON.parse(text);
+          if (parsedData.message) msg = parsedData.message;
+          if (parsedData.error_code) msg = `[${parsedData.error_code}] ${msg}`;
+        } catch (e) {}
+        return { ok: false, data: { ...parsedData, success: false, error: true, message: msg, error_code: parsedData.error_code || `HTTP_${res.status}` } };
+      }
+
+      const contentType = res.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await res.text();
+        reportError('INVALID_RESPONSE', 'Invalid response from server', {
+          description: text.substring(0, 200),
+          status: res.status,
+          payload: payload
+        });
+        return { ok: false, data: { success: false, error: true, message: 'Invalid response from server', raw_response: text.substring(0, 200) } };
+      }
+
+      // ═══════════════════════════════════════════════════════
+// UI BLOCK RENDERER — n8n drives the UI completely
+
+
+      const data = await res.json();
+      return { ok: true, data: data };
+
+    } catch (err) {
+      clearTimeout(timeoutId);
+
+      reportError('NETWORK', err.message || 'Network error', {
+        description: err.stack || String(err),
+        payload: payload
+      });
+
+      if (attempt < MAX_RETRIES && (err.name === 'AbortError' || err.name === 'TypeError')) {
+        btnText.textContent = `Retrying (${attempt}/${MAX_RETRIES})...`;
+        await new Promise(r => setTimeout(r, 2500));
+        return trySubmit(attempt + 1);
+      }
+
+      return { 
+        ok: false, 
+        data: { 
+          success: false, 
+          error: true, 
+          message: err.name === 'AbortError' ? 'Request timed out. Please try again.' : (err.message || 'Network error'),
+          error_code: err.name || 'NETWORK_ERROR'
+        } 
+      };
     }
+  }
 
-    const contentType = res.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      const text = await res.text();
-      errorInfo += `Response body: ${text.substring(0, 500)}`;
-      throw new Error(`Invalid response type: ${contentType || 'none'}`);
-    }
+  const result = await trySubmit(1);
+  document.getElementById('processing').classList.add('hidden');
 
-    const data = await res.json();
-    errorInfo += `Parsed JSON: ${JSON.stringify(data, null, 2).substring(0, 500)}`;
+  const data = result.data;
 
-    if (data.error) {
-      throw new Error(data.message || data.error_code || 'Unknown server error');
-    }
-
-    document.getElementById('processing').classList.add('hidden');
-    document.getElementById('result').classList.remove('hidden');
-
-  } catch (err) {
-    document.getElementById('processing').classList.add('hidden');
-    document.getElementById('error').classList.remove('hidden');
-    
-    let msg = err.message || 'Failed to record decision.';
-    
-    if (err.name === 'AbortError') {
-      msg = 'Request timed out. The server may be processing your decision. Please check your email or try again.';
-    } else if (err.message.includes('Failed to fetch')) {
-      msg = 'Network error. Please check your connection and try again.';
-    }
-
-    document.getElementById('errorMsg').textContent = msg;
-    document.getElementById('errorDetails').textContent = errorInfo || err.stack || 'No additional details.';
-  } finally {
+  if (result.aiError === true) {
     btn.disabled = false;
     spinner.classList.add('hidden');
+    btnText.textContent = 'Confirm Decision';
+    renderResponse({
+      success: false,
+      error: true,
+      error_code: 'AI_SERVICE_ERROR',
+      message: 'AI service temporarily unavailable. Please try again in a few minutes.',
+    });
+    return;
   }
+
+  // ═══════════════════════════════════════════════════════
+  // التغيير الجوهري: نعرض الاستجابة الديناميكية دائماً
+  // ═══════════════════════════════════════════════════════
+  renderResponse(data);
+
+  btn.disabled = false;
+  spinner.classList.add('hidden');
+  btnText.textContent = 'Confirm Decision';
+}
+
+function escHtml(t) {
+  if (!t) return '';
+  const d = document.createElement('div');
+  d.textContent = t;
+  return d.innerHTML;
 }
 </script>
 </body>
